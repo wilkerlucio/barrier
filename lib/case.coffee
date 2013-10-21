@@ -4,8 +4,7 @@ module.exports = class Case
   constructor: (@title, @block, @scope) ->
 
   run: (context) ->
-    @block.call(context)
-    Q(null)
+    context.pushTask(Q @block.call(context))
 
   fullTitle: ->
     "#{@scope.fullTitle()} #{@title}"

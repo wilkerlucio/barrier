@@ -54,14 +54,16 @@ module.exports = class Suite
   run: (index = 0, defer = Q.defer()) ->
     tcase = @testCases[index]
     @currentRunContext = new RunContext()
+    done = @currentRunContext.done
 
     if tcase
-      g = tempChange(global, expect: @expect)
+      g = tempChange(global, expect: @expect, barrierContext: @currentRunContext)
 
-      p = tcase.run(@currentRunContext)
-      p.then       => defer.notify(new TestReport(tcase))
-      p.fail (err) => defer.notify(new TestReport(tcase, err))
-      p.finally    => g(); @run(index + 1, defer)
+      done.then       => defer.notify(new TestReport(tcase))
+      done.fail (err) => defer.notify(new TestReport(tcase, err))
+      done.finally    => g(); @run(index + 1, defer)
+
+      tcase.run(@currentRunContext)
     else
       defer.resolve(null)
 
