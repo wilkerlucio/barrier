@@ -1,0 +1,19 @@
+{
+  "name": "barrier",
+  "version": "0.0.1",
+  "description": "Promises featured test framework",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "q": "~0.9.7",
+    "coffee-script": "~1.6.3"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-watch": "~0.5.3"
+  }
+}
