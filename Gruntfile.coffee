@@ -7,7 +7,7 @@ module.exports = (grunt) ->
     reporter = new DotReporter()
 
     suite = new Suite()
-    suite.globalize =>
+    suite.withDSL =>
       @files.forEach (pair) ->
         pair.src.forEach (f) ->
           require "./#{f}"

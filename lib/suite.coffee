@@ -40,7 +40,7 @@ module.exports = class Suite
 
   runContext: -> @currentRunContext || null
 
-  globalize: (callback) ->
+  withDSL: (callback) ->
     tempChange global,
       describe:   @describe
       it:         @it
