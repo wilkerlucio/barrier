@@ -64,7 +64,7 @@ module.exports = class Suite
       done.finally    => g(); @run(index + 1, defer)
 
       try
-        tcase.run(@currentRunContext)
+        tcase.run(@currentRunContext, @testCases[index + 1] || null)
       catch err
         @currentRunContext.defer.reject(err)
     else
@@ -74,7 +74,7 @@ module.exports = class Suite
 
   # DSL
 
-  describe: (title, block) =>
+  describe: (title, block = ->) =>
     @scopes.push(new Scope(title, @lastScope(true)))
     block()
     @scopes.pop()
@@ -87,7 +87,7 @@ module.exports = class Suite
   before:     (block) => @lastScope().beforeBlocks.push(new RunOnceBlock(block))
   beforeEach: (block) => @lastScope().beforeBlocks.push(new RunBlock(block))
   after:      (block) => @lastScope().afterBlocks.push(new RunOnceBlock(block))
-  afterEach:  (block) => @lastScope().afterBlocks.push(new RunBlock(block))
+  afterEach:  (block) => @lastScope().afterEachBlocks.push(new RunBlock(block))
 
   let: (name, block) => @lastScope().letBlocks.push(new LetBlock(block))
 
