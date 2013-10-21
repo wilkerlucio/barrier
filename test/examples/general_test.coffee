@@ -47,10 +47,10 @@ describe "Before Blocks", ->
   it "runs before each on each test", ->
     expect(n).eq(6)
 
-allAfter = null
-eachAfter = null
-
 describe "After Blocks", ->
+  allAfter = null
+  eachAfter = null
+
   describe "let's nest", ->
     after -> allAfter = true
     afterEach -> eachAfter = true
