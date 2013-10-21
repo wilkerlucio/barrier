@@ -13,6 +13,7 @@ module.exports = class DotReporter
   report: (result) =>
     if result.err
       @out.write("F")
+      console.log(result.err)
     else
       @out.write(".")
 

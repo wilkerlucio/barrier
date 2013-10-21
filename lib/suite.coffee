@@ -63,7 +63,10 @@ module.exports = class Suite
       done.fail (err) => defer.notify(new TestReport(tcase, err))
       done.finally    => g(); @run(index + 1, defer)
 
-      tcase.run(@currentRunContext)
+      try
+        tcase.run(@currentRunContext)
+      catch err
+        @currentRunContext.defer.reject(err)
     else
       defer.resolve(null)
 

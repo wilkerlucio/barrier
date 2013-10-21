@@ -8,5 +8,5 @@ module.exports = class RunOnceBlock extends RunBlock
 
   run: ->
     unless @runned
-      super
       @runned = true
+      super

@@ -3,6 +3,12 @@ module.exports = class Scope
     @beforeBlocks = []
     @afterBlocks = []
 
+  allBeforeBlocks: ->
+    if @parent
+      @parent.allBeforeBlocks().concat(@beforeBlocks)
+    else
+      @beforeBlocks
+
   fullTitle: ->
     if @parent
       "#{@parent.fullTitle()} #{@title}"
