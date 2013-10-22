@@ -17,6 +17,8 @@ module.exports = class RunContext
     task.finally(@taskDone)
     @tasks.push(task)
 
+    task
+
   pushError: (err) =>
     @errors.push(err)
 

@@ -1,8 +1,12 @@
+_ = require("underscore")
+Q = require("q")
+
 module.exports = class Scope
   constructor: (@title, @parent) ->
     @beforeBlocks = []
     @afterEachBlocks = []
     @afterBlocks = []
+    @lazyBlocks = {}
 
   allBeforeBlocks: ->
     if @parent
@@ -15,6 +19,22 @@ module.exports = class Scope
       @parent.allAfterEachBlocks().concat(@afterEachBlocks)
     else
       @afterEachBlocks.slice(0)
+
+  addLazy: (name, block) -> @lazyBlocks[name] = block
+
+  inject: (variables, context) ->
+    promises = _.map variables, (v) => @lazyFactory(v)
+
+    Q.all promises
+
+  lazyFactory: (name) ->
+    block = @lazyBlocks[name]
+    block ||= @parent.lazyFactory(name) if @parent
+
+    if _.isUndefined(block)
+      throw new Error("Lazy dependency #{name} wasn't defined")
+
+    block()
 
   fullTitle: ->
     if @parent

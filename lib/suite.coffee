@@ -48,7 +48,7 @@ module.exports = class Suite
       beforeEach: @beforeEach
       after:      @after
       afterEach:  @afterEach
-      let:        @let
+      lazy:       @lazy
     , callback
 
   run: (index = 0, defer = Q.defer()) ->
@@ -89,6 +89,6 @@ module.exports = class Suite
   after:      (block) => @lastScope().afterBlocks.push(new RunOnceBlock(block))
   afterEach:  (block) => @lastScope().afterEachBlocks.push(new RunBlock(block))
 
-  let: (name, block) => @lastScope().letBlocks.push(new LetBlock(block))
+  lazy: (name, block) => @lastScope().addLazy(name, block)
 
   expect: (value) => new Exceptation(value, @runContext())

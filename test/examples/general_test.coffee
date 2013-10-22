@@ -53,7 +53,7 @@ describe "After Blocks", ->
 
   describe "let's nest", ->
     after -> allAfter = true
-    afterEach -> eachAfter = true
+    afterEach -> Q(null).delay(50).then -> eachAfter = true
 
     it "don't change any on first", ->
       expect(allAfter).eq(null)
@@ -66,3 +66,9 @@ describe "After Blocks", ->
   it "change all", ->
     expect(allAfter).eq(true)
     expect(eachAfter).eq(true)
+
+describe "Lazy Blocks", ->
+  lazy "user", -> Q("value").delay(30)
+
+  it "injects the values", (user) ->
+    expect(user).eq("value")
