@@ -1,6 +1,6 @@
 {
   "name": "barriertest",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Promises featured test framework",
   "main": "./index.js",
   "bin": {
