@@ -1,5 +1,3 @@
-Q = require("q")
-
 describe "Assertions", ->
   describe "be", ->
     it "compares strings",  -> expect("string").be("string")

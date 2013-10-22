@@ -1,4 +1,3 @@
-Q = require("q")
 {dv} = require("./test_helper.coffee")
 
 describe "Lazy Blocks", ->
