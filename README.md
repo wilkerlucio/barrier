@@ -121,7 +121,8 @@ describe "Before promise me...", ->
   userDecorated = null
 
   before -> loadUser().then (u) -> user = u
-  # note that before blocks run in series, so, it's safe to expect that previous before blocks are done
+  # note that before blocks run in series, so, it's safe to expect that previous
+  # before blocks are done
   before -> userDecorated = decorateUser(user)
 
   it "is awesome", -> expect(userDecorated).to.not().be.null()
