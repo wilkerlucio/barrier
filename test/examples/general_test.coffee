@@ -98,3 +98,12 @@ describe "Lazy Blocks", ->
 
       it "loads the child first", (onchild) -> expect(onchild).eq("child")
       it "loads from proper parents", (onroot) -> expect(onroot).eq("root")
+
+describe "async testing", ->
+  it "supports async", ->
+    done = @async()
+
+    setTimeout ->
+      expect(true).eq(true)
+      done()
+    , 40

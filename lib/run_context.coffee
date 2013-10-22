@@ -48,3 +48,9 @@ module.exports = class RunContext
         @defer.resolve(null)
 
   allTasksDone: -> _.every @tasks, (task) -> !task.isPending()
+
+  async: ->
+    defer = Q.defer()
+    @pushTask(defer.promise)
+
+    -> defer.resolve(null)
