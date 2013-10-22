@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <title>Barrier by wilkerlucio</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>Barrier</h1>
+        <h2>A test framework that embraces promises for real</h2>
+
+        <section id="downloads">
+          <a href="https://github.com/wilkerlucio/barrier/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/wilkerlucio/barrier/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/wilkerlucio/barrier" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <h1>
+<a name="barrier" class="anchor" href="#barrier"><span class="octicon octicon-link"></span></a>Barrier</h1>
+
+<p>A test framework that embraces promises for real</p>
+
+<h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<pre><code>npm install barriertest
+</code></pre>
+
+<h2>
+<a name="basic-testing" class="anchor" href="#basic-testing"><span class="octicon octicon-link"></span></a>Basic Testing</h2>
+
+<p>This part describes the regular sync tests.</p>
+
+<p>Barrier uses RSpec-like syntax to describe tests, as so:</p>
+
+<div class="highlight highlight-coffee"><pre><span class="nx">describe</span> <span class="s">"MyObject"</span><span class="p">,</span> <span class="nf">-&gt;</span>
+  <span class="nx">it</span> <span class="s">"sums two numbers"</span><span class="p">,</span> <span class="nf">-&gt;</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">sum</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)).</span><span class="nx">to</span><span class="p">.</span><span class="nx">eq</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+<p>You can nest describe blocks as you like:</p>
+
+<div class="highlight highlight-coffee"><pre><span class="nx">describe</span> <span class="s">"MyObject"</span><span class="p">,</span> <span class="nf">-&gt;</span>
+  <span class="nx">describe</span> <span class="s">"some internal"</span><span class="p">,</span> <span class="nf">-&gt;</span>
+    <span class="nx">it</span> <span class="s">"do something"</span><span class="p">,</span> <span class="nf">-&gt;</span>
+      <span class="nx">expect</span><span class="p">(</span><span class="nx">something</span><span class="p">()).</span><span class="nx">to</span><span class="p">.</span><span class="nx">eq</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span>
+</pre></div>
+
+<p>We support <code>before</code>, <code>beforeEach</code>, <code>after</code> and <code>afterEach</code> clauses:</p>
+
+<div class="highlight highlight-coffee"><pre><span class="nx">describe</span> <span class="s">"MyObject"</span><span class="p">,</span> <span class="nf">-&gt;</span>
+  <span class="nv">someVar = </span><span class="kc">null</span>
+
+  <span class="nx">before</span> <span class="nf">-&gt;</span> <span class="nv">someVar = </span><span class="s">"hello"</span>
+
+  <span class="nx">it</span> <span class="s">"must set someVar"</span><span class="p">,</span> <span class="nf">-&gt;</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">someVar</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">eq</span><span class="p">(</span><span class="s">"hello"</span><span class="p">)</span>
+</pre></div>
+
+<p>Also, we support lazy blocks for dependency injection:</p>
+
+<div class="highlight highlight-coffee"><pre><span class="nx">describe</span> <span class="s">"MyObject"</span><span class="p">,</span> <span class="nf">-&gt;</span>
+  <span class="nx">lazy</span> <span class="s">"value"</span><span class="p">,</span> <span class="nf">-&gt;</span> <span class="mi">50</span>
+
+  <span class="nx">it</span> <span class="s">"loads the value"</span><span class="p">,</span> <span class="nf">(value) -&gt;</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">value</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">eq</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span>
+</pre></div>
+
+<p>Note that the we do a reflection on the function to extract the variable name, them we lookup and build it for each test.</p>
+
+<p>And you can inject dependencies on each other:</p>
+
+<div class="highlight highlight-coffee"><pre><span class="nx">describe</span> <span class="s">"MyObject"</span><span class="p">,</span> <span class="nf">-&gt;</span>
+  <span class="nx">lazy</span> <span class="s">"value"</span><span class="p">,</span> <span class="nf">-&gt;</span> <span class="mi">50</span>
+  <span class="nx">lazy</span> <span class="s">"value2"</span><span class="p">,</span> <span class="nf">(value) -&gt;</span> <span class="nx">value</span> <span class="o">+</span> <span class="mi">10</span>
+
+  <span class="nx">it</span> <span class="s">"loads the values"</span><span class="p">,</span> <span class="nf">(value2) -&gt;</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">value2</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">eq</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span>
+</pre></div>
+
+<h2>
+<a name="async-testing" class="anchor" href="#async-testing"><span class="octicon octicon-link"></span></a>Async Testing</h2>
+
+<p>For basic async testing, you can call <code>async</code> into the current object to make the test wait:</p>
+
+<div class="highlight highlight-coffee"><pre><span class="nx">describe</span> <span class="s">"Awesome"</span><span class="p">,</span> <span class="nf">-&gt;</span>
+  <span class="nx">it</span> <span class="s">"supports async testing"</span><span class="p">,</span> <span class="nf">-&gt;</span>
+    <span class="nv">done = </span><span class="nx">@async</span><span class="p">()</span>
+
+    <span class="nx">setTimeout</span> <span class="nf">-&gt;</span>
+      <span class="nx">expect</span><span class="p">(</span><span class="kc">true</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">be</span><span class="p">.</span><span class="nx">true</span><span class="p">()</span>
+      <span class="nx">done</span><span class="p">()</span>
+    <span class="p">,</span> <span class="mi">50</span>
+</pre></div>
+
+<p>Despites the support on simple async testing, we really recommend you to use promises instead, as described on the next section.</p>
+
+<h2>
+<a name="promises-testing" class="anchor" href="#promises-testing"><span class="octicon octicon-link"></span></a>Promises Testing</h2>
+
+<p>We recognize that there is a lot of async code into Node, and also, we recognize that promises have a great value in helping to write better async code.</p>
+
+<p>That's why Barrier supports and recommends promises usage over the entire testing process.</p>
+
+<p>But actually there is not much to say about the usage, because it's just transparent! You can just use promises as values and we handle the rest!</p>
+
+<p>Check some examples:</p>
+
+<div class="highlight highlight-coffee"><pre><span class="nx">describe</span> <span class="s">"Using Promises"</span><span class="p">,</span> <span class="nf">-&gt;</span>
+  <span class="nx">it</span> <span class="s">"can use promises as values on expectations"</span><span class="p">,</span> <span class="nf">-&gt;</span>
+    <span class="c1"># imagine that loadUser and fetchRemoteAge are functions that returns</span>
+    <span class="c1"># promises that will eventually handle de values</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">loadUser</span><span class="p">(</span><span class="mi">30</span><span class="p">)).</span><span class="nx">to</span><span class="p">.</span><span class="nx">haveProperty</span><span class="p">(</span><span class="s">"age"</span><span class="p">,</span> <span class="nx">fetchRemoteAge</span><span class="p">())</span>
+</pre></div>
+
+<p>Also, if your test returns a promise, the runner will wait for it:</p>
+
+<div class="highlight highlight-coffee"><pre><span class="nx">describe</span> <span class="s">"Delaying the runner"</span><span class="p">,</span> <span class="nf">-&gt;</span>
+  <span class="nx">it</span> <span class="s">"will wait for my promise"</span><span class="p">,</span> <span class="nf">-&gt;</span>
+    <span class="nx">Q</span><span class="p">(</span><span class="s">"value"</span><span class="p">).</span><span class="nx">delay</span><span class="p">(</span><span class="mi">30</span><span class="p">).</span><span class="nx">then</span> <span class="nf">(v) -&gt;</span>
+      <span class="nx">expect</span><span class="p">(</span><span class="nx">v</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">eq</span><span class="p">(</span><span class="s">"value"</span><span class="p">)</span> <span class="c1"># and that's it, Barrier will do the async handling magic</span>
+</pre></div>
+
+<p>Before and after blocks does the same, if you return promises on they, the runner will wait before going on:</p>
+
+<div class="highlight highlight-coffee"><pre><span class="nx">describe</span> <span class="s">"Before promise me..."</span><span class="p">,</span> <span class="nf">-&gt;</span>
+  <span class="nv">user = </span><span class="kc">null</span>
+  <span class="nv">userDecorated = </span><span class="kc">null</span>
+
+  <span class="nx">before</span> <span class="nf">-&gt;</span> <span class="nx">loadUser</span><span class="p">().</span><span class="nx">then</span> <span class="nf">(u) -&gt;</span> <span class="nv">user = </span><span class="nx">u</span>
+  <span class="c1"># note that before blocks run in series, so, it's safe to expect that previous</span>
+  <span class="c1"># before blocks are done</span>
+  <span class="nx">before</span> <span class="nf">-&gt;</span> <span class="nv">userDecorated = </span><span class="nx">decorateUser</span><span class="p">(</span><span class="nx">user</span><span class="p">)</span>
+
+  <span class="nx">it</span> <span class="s">"is awesome"</span><span class="p">,</span> <span class="nf">-&gt;</span> <span class="nx">expect</span><span class="p">(</span><span class="nx">userDecorated</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="o">not</span><span class="p">().</span><span class="nx">be</span><span class="p">.</span><span class="nx">null</span><span class="p">()</span>
+</pre></div>
+
+<p>But remember about Lazy Attributes? They can be promises too!</p>
+
+<div class="highlight highlight-coffee"><pre><span class="nx">describe</span> <span class="s">"Lazy Promises"</span><span class="p">,</span> <span class="nf">-&gt;</span>
+  <span class="nx">lazy</span> <span class="s">"user"</span><span class="p">,</span> <span class="nf">-&gt;</span> <span class="nx">findUserOnDB</span><span class="p">()</span>
+
+  <span class="nx">it</span> <span class="s">"will load the promise and inject it!"</span><span class="p">,</span> <span class="nf">(user) -&gt;</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">eq</span><span class="p">(</span><span class="s">"sir"</span><span class="p">)</span>
+</pre></div>
+
+<p>And even better, you can do it while injecting lazy dependencies!</p>
+
+<div class="highlight highlight-coffee"><pre><span class="nx">describe</span> <span class="s">"Lazy Promises Dependencies!"</span><span class="p">,</span> <span class="nf">-&gt;</span>
+  <span class="nx">lazy</span> <span class="s">"store"</span><span class="p">,</span> <span class="nf">-&gt;</span> <span class="nx">createStoreOnDb</span><span class="p">()</span>
+  <span class="nx">lazy</span> <span class="s">"user"</span><span class="p">,</span> <span class="nf">(store) -&gt;</span> <span class="nx">createUser</span><span class="p">(</span><span class="nv">store: </span><span class="nx">store</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span>
+
+  <span class="nx">it</span> <span class="s">"will load gracefully"</span><span class="p">,</span> <span class="nf">(user) -&gt;</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">user</span><span class="p">.</span><span class="nx">store</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="o">not</span><span class="p">.</span><span class="nx">be</span><span class="p">.</span><span class="nx">null</span><span class="p">()</span>
+</pre></div>
+
+<p>Get much more examples <a href="https://github.com/wilkerlucio/barrier/blob/master/test/examples/general_test.coffee">here</a></p>
+      </section>
+    </div>
+
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-3833116-9");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
