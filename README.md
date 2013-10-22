@@ -148,3 +148,5 @@ describe "Lazy Promises Dependencies!", ->
   it "will load gracefully", (user) ->
     expect(user.store).to.not.be.null()
 ```
+
+Get much more examples [here](https://github.com/wilkerlucio/barrier/blob/master/test/examples/general_test.coffee)
