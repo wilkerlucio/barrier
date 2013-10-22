@@ -83,8 +83,18 @@ describe "Lazy Blocks", ->
     it "injects the value", (user) -> expect(user).eq("ID - 10")
 
   describe "Lazy Caching", ->
-    lazy "random", -> Math.random()
+    lazy "random", -> Q(Math.random()).delay(30)
     lazy "urand", (random) -> "U-#{random}"
 
     it "should use the same", (urand, random) ->
       expect(urand).eq("U-#{random}")
+
+  describe "Lazy Lookup", ->
+    lazy "onroot", -> Q("root").delay(20)
+    lazy "onchild", -> "rootChild"
+
+    describe "inner block", ->
+      lazy "onchild", -> "child"
+
+      it "loads the child first", (onchild) -> expect(onchild).eq("child")
+      it "loads from proper parents", (onroot) -> expect(onroot).eq("root")
