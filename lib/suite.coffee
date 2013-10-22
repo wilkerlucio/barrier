@@ -1,3 +1,4 @@
+_            = require("underscore")
 Q            = require("q")
 RunBlock     = require("./run_block")
 RunOnceBlock = require("./run_once_block")
@@ -25,7 +26,11 @@ tempChange = (object, attributes, callback) ->
     restore
 
 module.exports = class Suite
-  constructor: ->
+  constructor: (options = {})->
+    @options = _.extend
+      timeout: 2000
+    , options
+
     @scopes = []
     @testCases = []
     @currentRunContext = null
@@ -54,7 +59,7 @@ module.exports = class Suite
   run: (index = 0, defer = Q.defer()) ->
     tcase = @testCases[index]
     @currentRunContext = new RunContext()
-    done = @currentRunContext.done
+    done = @currentRunContext.done.timeout(@options.timeout)
 
     if tcase
       g = tempChange(global, expect: @expect, barrierContext: @currentRunContext)

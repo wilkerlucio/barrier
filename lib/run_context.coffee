@@ -21,7 +21,6 @@ module.exports = class RunContext
     @done = @defer.promise
 
   pushTask: (task) ->
-    task = task.timeout(2000)
     task.catch(@pushError)
     task.finally(@taskDone)
     @tasks.push(task)

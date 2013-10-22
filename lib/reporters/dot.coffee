@@ -26,7 +26,18 @@ module.exports = class DotReporter
   summary: =>
     runTime = (new Date()).getTime() - @startTime
     success = _.filter @results, (r) -> r.isSuccess()
+    failed = _.filter @results, (r) -> r.isFailed()
 
-    console.log()
-    console.log()
-    console.log("  #{success.length} success ".green + "(#{runTime}ms)".grey)
+    @log()
+    @log()
+
+    if failed.length > 0
+      for {test, err} in failed
+        @log(test.fullTitle().red)
+        @log(err.stack.red)
+        @log()
+
+    @log("#{success.length} success ".green + "(#{runTime}ms)".grey)
+    @log("#{failed.length} failed ".red) if failed.length > 0
+
+  log: (message = "") -> console.log("  #{message}")
