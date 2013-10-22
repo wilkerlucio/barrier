@@ -1,20 +1,19 @@
+Path = require("path")
+
 module.exports = (grunt) ->
   grunt.loadNpmTasks("grunt-contrib-watch")
 
   grunt.registerMultiTask "barriercli", "Run Barrier test suite", ->
-    Suite = require("./lib/suite")
-    DotReporter = require("./lib/reporters/dot")
-    reporter = new DotReporter()
+    Runner = require("./lib/runner")
 
-    suite = new Suite()
-    suite.withDSL =>
-      @files.forEach (pair) ->
-        pair.src.forEach (f) ->
-          require "./#{f}"
+    files = []
 
-    p = suite.run()
-    reporter.attach(p)
-    p.done(@async())
+    @files.forEach (pair) ->
+      pair.src.forEach (f) ->
+        files.push(Path.resolve(f))
+
+    runner = new Runner()
+    runner.run(files, @async())
 
   grunt.initConfig
     pkg: grunt.file.readJSON("package.json")

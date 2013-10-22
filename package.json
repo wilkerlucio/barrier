@@ -1,17 +1,22 @@
 {
-  "name": "barrier",
-  "version": "0.0.1",
+  "name": "barriertest",
+  "version": "0.0.1.beta1",
   "description": "Promises featured test framework",
   "main": "lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Wilker Lucio <wilkerlucio@gmail.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/wilkerlucio/barrier.git"
+  },
   "dependencies": {
     "q": "~0.9.7",
     "coffee-script": "~1.6.3",
-    "underscore": "~1.5.2"
+    "underscore": "~1.5.2",
+    "colors": "~0.6.2"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
