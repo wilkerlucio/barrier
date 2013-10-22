@@ -149,4 +149,4 @@ describe "Lazy Promises Dependencies!", ->
     expect(user.store).not().null()
 ```
 
-Get much more examples [here](https://github.com/wilkerlucio/barrier/blob/master/test/examples/general_test.coffee)
+Get much more examples [here](https://github.com/wilkerlucio/barrier/blob/master/test/examples)
