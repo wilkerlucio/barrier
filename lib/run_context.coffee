@@ -1,6 +1,6 @@
 _ = require("underscore")
 Q = require("q")
-Match = require("./matchers")
+Match = require("./matchers/index.coffee")
 
 extractArgs = (fn) ->
   string = fn.toString()

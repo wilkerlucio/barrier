@@ -1,12 +1,12 @@
 _            = require("underscore")
 Q            = require("q")
-RunBlock     = require("./run_block")
-RunOnceBlock = require("./run_once_block")
-Scope        = require("./scope")
-Case         = require("./case")
-Exceptation  = require("./expectation")
-RunContext   = require("./run_context")
-TestReport   = require("./test_report")
+RunBlock     = require("./run_block.coffee")
+RunOnceBlock = require("./run_once_block.coffee")
+Scope        = require("./scope.coffee")
+Case         = require("./case.coffee")
+Exceptation  = require("./expectation.coffee")
+RunContext   = require("./run_context.coffee")
+TestReport   = require("./test_report.coffee")
 
 tempChange = (object, attributes, callback) ->
   oldValues = {}

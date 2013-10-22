@@ -1,5 +1,5 @@
-Suite       = require("./suite")
-DotReporter = require("./reporters/dot")
+Suite       = require("./suite.coffee")
+DotReporter = require("./reporters/dot.coffee")
 
 module.exports = class Runner
   constructor: (options = {}) ->

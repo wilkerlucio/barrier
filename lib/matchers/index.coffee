@@ -25,8 +25,8 @@ class MatcherEngine
 
 engine = new MatcherEngine()
 
-require("./be")(engine)
-require("./eq")(engine)
+require("./be.coffee")(engine)
+require("./eq.coffee")(engine)
 
 engine.defineMatcher "haveProperty", (actual, property, value) ->
   if value? then _.isEqual(actual[property], value) else actual[property]?

@@ -1,4 +1,4 @@
-RunBlock = require("./run_block")
+RunBlock = require("./run_block.coffee")
 
 module.exports = class RunOnceBlock extends RunBlock
   constructor: ->

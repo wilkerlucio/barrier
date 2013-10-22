@@ -1,6 +1,6 @@
 Q = require("q")
 _ = require("underscore")
-matcher = require("./matchers")
+matcher = require("./matchers/index.coffee")
 
 module.exports = class Expectation
   constructor: (@value, @context, @reverse = false) ->
