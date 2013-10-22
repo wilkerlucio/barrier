@@ -146,7 +146,7 @@ describe "Lazy Promises Dependencies!", ->
   lazy "user", (store) -> createUser(store: store.id)
 
   it "will load gracefully", (user) ->
-    expect(user.store).to.not.be.null()
+    expect(user.store).not().null()
 ```
 
 Get much more examples [here](https://github.com/wilkerlucio/barrier/blob/master/test/examples/general_test.coffee)
