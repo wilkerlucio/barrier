@@ -2,11 +2,20 @@ _ = require("underscore")
 Q = require("q")
 Match = require("./matchers")
 
+extractArgs = (fn) ->
+  string = fn.toString()
+
+  if match = string.match(/^function\s?\((.+?)\)/)
+    _.map match[1].split(","), (word) -> word.replace(/^\s+|\s+$/g, '')
+  else
+    []
+
 module.exports = class RunContext
   constructor: ->
     @match = Match
     @tasks = []
     @errors = []
+    @lazys = {}
 
     @defer = Q.defer()
     @done = @defer.promise
@@ -19,8 +28,17 @@ module.exports = class RunContext
 
     task
 
-  pushError: (err) =>
-    @errors.push(err)
+  pushError: (err) => @errors.push(err)
+
+  inject: (fn, scope) ->
+    args = extractArgs(fn)
+
+    promises = _.map args, (arg) =>
+      block = scope.lazyFactory(arg)
+
+      @lazys[arg] ||= @inject(block, scope).then (args) => block.apply(this, args)
+
+    Q.all promises
 
   taskDone: =>
     if @allTasksDone()

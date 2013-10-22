@@ -1,14 +1,6 @@
 _ = require("underscore")
 Q = require("q")
 
-extractArgs = (fn) ->
-  string = fn.toString()
-
-  if match = string.match(/^function\s?\((.+?)\)/)
-    _.map match[1].split(","), (word) -> word.replace(/^\s+|\s+$/g, '')
-  else
-    []
-
 module.exports = class Case
   constructor: (@title, @block, @scope) ->
 
@@ -26,9 +18,7 @@ module.exports = class Case
     chain.catch (err) -> context.pushTask(Q.reject(err))
 
   runBlock: (context) ->
-    args = extractArgs(@block)
-
-    @scope.inject(args, context).then (args) => Q @block.apply(context, args)
+    context.inject(@block, @scope).then (args) => Q @block.apply(context, args)
 
   runList: (remaining, defer = Q.defer()) ->
     if remaining.length > 0

@@ -22,11 +22,6 @@ module.exports = class Scope
 
   addLazy: (name, block) -> @lazyBlocks[name] = block
 
-  inject: (variables, context) ->
-    promises = _.map variables, (v) => @lazyFactory(v)
-
-    Q.all promises
-
   lazyFactory: (name) ->
     block = @lazyBlocks[name]
     block ||= @parent.lazyFactory(name) if @parent
@@ -34,7 +29,7 @@ module.exports = class Scope
     if _.isUndefined(block)
       throw new Error("Lazy dependency #{name} wasn't defined")
 
-    block()
+    block
 
   fullTitle: ->
     if @parent

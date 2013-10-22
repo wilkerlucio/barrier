@@ -68,7 +68,23 @@ describe "After Blocks", ->
     expect(eachAfter).eq(true)
 
 describe "Lazy Blocks", ->
-  lazy "user", -> Q("value").delay(30)
+  describe "Simple Lazy", ->
+    lazy "user", -> "value"
+    it "injects the value", (user) -> expect(user).eq("value")
 
-  it "injects the values", (user) ->
-    expect(user).eq("value")
+  describe "Promised Lazy", ->
+    lazy "user", -> Q("value2").delay(30)
+    it "injects the value", (user) -> expect(user).eq("value2")
+
+  describe "Lazy Dependencies", ->
+    lazy "id", -> Q(10).delay(30)
+    lazy "user", (id) -> Q("ID - #{id}").delay(20)
+
+    it "injects the value", (user) -> expect(user).eq("ID - 10")
+
+  describe "Lazy Caching", ->
+    lazy "random", -> Math.random()
+    lazy "urand", (random) -> "U-#{random}"
+
+    it "should use the same", (urand, random) ->
+      expect(urand).eq("U-#{random}")
