@@ -20,4 +20,3 @@ describe "After Blocks", ->
   it "change all", ->
     expect(allAfter).eq(true)
     expect(eachAfter).eq(true)
-
