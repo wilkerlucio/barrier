@@ -18,6 +18,8 @@ This part describes the regular sync tests.
 Barrier uses RSpec-like syntax to describe tests, as so:
 
 ```javascript
+// Javascript
+
 describe("MyObject", function() {
   it("sums two numbers", function() {
     expect(sum(2, 3)).to.eq(5);
@@ -26,6 +28,8 @@ describe("MyObject", function() {
 ```
 
 ```coffee
+# Coffeescript
+
 describe "MyObject", ->
   it "sums two numbers", ->
     expect(sum(2, 3)).to.eq(5)
@@ -33,7 +37,21 @@ describe "MyObject", ->
 
 You can nest describe blocks as you like:
 
+```javascript
+// Javascript
+
+describe("MyObject", function() {
+  describe("some internal", function() {
+    it("do something", function() {
+      expect(something()).to.eq(true);
+    });
+  });
+});
+```
+
 ```coffee
+# Coffeescript
+
 describe "MyObject", ->
   describe "some internal", ->
     it "do something", ->
@@ -42,7 +60,23 @@ describe "MyObject", ->
 
 We support `before`, `beforeEach`, `after` and `afterEach` clauses:
 
+```javascript
+// Javascript
+
+describe("MyObject", function() {
+  var someVar = null;
+
+  before(function() { someVar = "hello"; });
+
+  it("must set someVar", function() {
+    expect(someVar).to.eq("hello");
+  });
+});
+```
+
 ```coffee
+# Coffeescript
+
 describe "MyObject", ->
   someVar = null
 
@@ -54,7 +88,21 @@ describe "MyObject", ->
 
 Also, we support lazy blocks for dependency injection:
 
+```javascript
+// Javascript
+
+describe("MyObject", function() {
+  lazy("value", function() { return 50; });
+
+  it("loads the value", function(value) {
+    expect(value).to.eq(50);
+  });
+});
+```
+
 ```coffee
+# Coffeescript
+
 describe "MyObject", ->
   lazy "value", -> 50
 
@@ -66,7 +114,22 @@ Note that the we do a reflection on the function to extract the variable name, t
 
 And you can inject dependencies on each other:
 
+```javascript
+// Javascript
+
+describe("MyObject", function() {
+  lazy("value", function() { return 50; });
+  lazy("value2", function(value) { return value + 10; });
+
+  it("loads the values", function(value2) {
+    expect(value2).to.eq(60);
+  });
+});
+```
+
 ```coffee
+# Coffeescript
+
 describe "MyObject", ->
   lazy "value", -> 50
   lazy "value2", (value) -> value + 10
@@ -80,7 +143,24 @@ Async Testing
 
 For basic async testing, you can call `async` into the current object to make the test wait:
 
+```javascript
+// Javascript
+
+describe("Awesome", function() {
+  return it("supports async testing", function() {
+    var done = this.async();
+
+    setTimeout(function() {
+      expect(true).to.be["true"]();
+      done();
+    }, 50);
+  });
+});
+```
+
 ```coffee
+# Coffeescript
+
 describe "Awesome", ->
   it "supports async testing", ->
     done = @async()
@@ -104,7 +184,19 @@ But actually there is not much to say about the usage, because it's just transpa
 
 Check some examples:
 
+```javascript
+// Javascript
+
+describe("Using Promises", function() {
+  it("can use promises as values on expectations", function() {
+    expect(loadUser(30)).to.haveProperty("age", fetchRemoteAge());
+  });
+});
+```
+
 ```coffee
+# Coffeescript
+
 describe "Using Promises", ->
   it "can use promises as values on expectations", ->
     # imagine that loadUser and fetchRemoteAge are functions that returns
@@ -114,7 +206,15 @@ describe "Using Promises", ->
 
 Also, if your test returns a promise, the runner will wait for it:
 
+```javascript
+// Javascript
+
+
+```
+
 ```coffee
+# Coffeescript
+
 describe "Delaying the runner", ->
   it "will wait for my promise", ->
     Q("value").delay(30).then (v) ->
@@ -123,7 +223,21 @@ describe "Delaying the runner", ->
 
 Before and after blocks does the same, if you return promises on they, the runner will wait before going on:
 
+```javascript
+// Javascript
+
+describe("Delaying the runner", function() {
+  it("will wait for my promise", function() {
+    Q("value").delay(30).then(function(v) {
+      expect(v).to.eq("value");
+    });
+  });
+});
+```
+
 ```coffee
+# Coffeescript
+
 describe "Before promise me...", ->
   user = null
   userDecorated = null
@@ -138,7 +252,15 @@ describe "Before promise me...", ->
 
 But remember about Lazy Attributes? They can be promises too!
 
+```javascript
+// Javascript
+
+
+```
+
 ```coffee
+# Coffeescript
+
 describe "Lazy Promises", ->
   lazy "user", -> findUserOnDB()
 
@@ -148,7 +270,21 @@ describe "Lazy Promises", ->
 
 And even better, you can do it while injecting lazy dependencies!
 
+```javascript
+// Javascript
+
+describe("Lazy Promises", function() {
+  lazy("user", function() { return findUserOnDB(); });
+
+  it("will load the promise and inject it!", function(user) {
+    expect(user.name).to.eq("sir");
+  });
+});
+```
+
 ```coffee
+# Coffeescript
+
 describe "Lazy Promises Dependencies!", ->
   lazy "store", -> createStoreOnDb()
   lazy "user", (store) -> createUser(store: store.id)
