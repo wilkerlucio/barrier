@@ -211,7 +211,7 @@ Also, if your test returns a promise, the runner will wait for it:
 
 describe("Delaying the runner", function() {
   it("will wait for my promise", function() {
-    Q("value").delay(30).then(function(v) {
+    return Q("value").delay(30).then(function(v) {
       expect(v).to.eq("value");
     });
   });
@@ -236,7 +236,10 @@ describe("Before promise me...", function() {
   var user, userDecorated;
 
   before(function() {
-    loadUser().then(function(u) {
+    // it's important that you return the promise here so Barrier will know
+    // that it needs to wait for it. In Coffeescript it's more transparent
+    // since Coffeescript always return the last statement
+    return loadUser().then(function(u) {
       user = u;
     });
   });
@@ -277,7 +280,6 @@ describe("Lazy Promises", function() {
     expect(user.name).to.eq("sir");
   });
 });
-
 ```
 
 ```coffee
@@ -302,7 +304,7 @@ describe("Lazy Promises Dependencies!", function() {
   });
 
   it("will load gracefully", function(user) {
-    expect(user.store).not()["null"]();
+    expect(user.store).not().null();
   });
 });
 ```
