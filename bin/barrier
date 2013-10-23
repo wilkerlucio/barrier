@@ -2,8 +2,7 @@
 
 require("coffee-script");
 
-var fs = require("fs");
-var pkg = JSON.parse(fs.readFileSync(__dirname + "/../package.json"));
+var pkg = require("../package.json");
 
 var program = require('commander');
 
