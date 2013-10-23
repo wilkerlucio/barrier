@@ -17,6 +17,14 @@ This part describes the regular sync tests.
 
 Barrier uses RSpec-like syntax to describe tests, as so:
 
+```javascript
+describe("MyObject", function() {
+  it("sums two numbers", function() {
+    expect(sum(2, 3)).to.eq(5);
+  });
+});
+```
+
 ```coffee
 describe "MyObject", ->
   it "sums two numbers", ->
