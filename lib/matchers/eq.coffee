@@ -1,5 +1,4 @@
 _ = require("underscore")
-Q = require("q")
 
 module.exports = (engine) ->
   engine.defineMatcher "eq",

@@ -24,9 +24,7 @@
   },
   "devDependencies": {
     "grunt": "~0.4.1",
-    "grunt-contrib-watch": "~0.5.3",
-    "coffeeify": "~0.5.2",
-    "browserify": "~2.34.3"
+    "grunt-contrib-watch": "~0.5.3"
   },
   "files": [
     "bin",

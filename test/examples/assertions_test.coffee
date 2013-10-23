@@ -20,3 +20,17 @@ describe "Assertions", ->
 
     it "check if the object has the property with wrong value", ->
       expect(a: 1).not().haveProperty("a", 2)
+
+  describe "true", ->
+    it "valid for true", -> expect(true).true()
+    it "invalid for false", -> expect(false).not().true()
+
+  describe "false", ->
+    it "valid for false", -> expect(false).false()
+    it "invalid for true", -> expect(true).not().false()
+
+  describe "null", ->
+    it "valid for null", -> expect(null).null()
+    it "invalid for true", -> expect(true).not().null()
+    it "invalid for false", -> expect(false).not().null()
+    it "invalid for undefined", -> expect(undefined).not().null()

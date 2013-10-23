@@ -1,9 +1,5 @@
 _ = require("underscore")
 
-class SimpleMatcher
-  constructor: (@matcher) ->
-  match: (args...) -> @matcher(args...)
-
 class MatcherEngine
   constructor: ->
     @matchers = {}
@@ -12,8 +8,9 @@ class MatcherEngine
     matcher = {match: matcher} if _.isFunction(matcher)
 
     matcher = _.extend
-      failMessage: (actual) -> "expected #{actual} to #{name}"
-      reverseFailMessage: (actual) -> "expected #{actual} to not #{name}"
+      errorMessage: (args...) -> name + " " + args.join(" ")
+      failMessage: (actual, args...) -> "expected #{actual} to #{@errorMessage(args...)}"
+      reverseFailMessage: (actual, args...) -> "expected #{actual} to not #{@errorMessage(args...)}"
     , matcher
 
     @matchers[name] = matcher
@@ -25,10 +22,9 @@ class MatcherEngine
 
 engine = new MatcherEngine()
 
+require("./simple.coffee")(engine)
 require("./be.coffee")(engine)
 require("./eq.coffee")(engine)
-
-engine.defineMatcher "haveProperty", (actual, property, value) ->
-  if value? then _.isEqual(actual[property], value) else actual[property]?
+require("./have_property.coffee")(engine)
 
 module.exports = engine

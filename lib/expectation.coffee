@@ -20,7 +20,9 @@ module.exports = class Expectation
 
     @context.pushTask(task)
 
+    this
+
   raiseError: (bool) -> if @reverse then bool else !bool
   errorMessage: (matcher, values) ->
     fnName = if @reverse then "reverseFailMessage" else "failMessage"
-    matcher[fnName].apply(this, values)
+    matcher[fnName].apply(matcher, values)
