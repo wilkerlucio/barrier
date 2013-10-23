@@ -209,7 +209,13 @@ Also, if your test returns a promise, the runner will wait for it:
 ```javascript
 // Javascript
 
-
+describe("Delaying the runner", function() {
+  it("will wait for my promise", function() {
+    Q("value").delay(30).then(function(v) {
+      expect(v).to.eq("value");
+    });
+  });
+});
 ```
 
 ```coffee
@@ -226,11 +232,20 @@ Before and after blocks does the same, if you return promises on they, the runne
 ```javascript
 // Javascript
 
-describe("Delaying the runner", function() {
-  it("will wait for my promise", function() {
-    Q("value").delay(30).then(function(v) {
-      expect(v).to.eq("value");
+describe("Before promise me...", function() {
+  var user, userDecorated;
+
+  before(function() {
+    loadUser().then(function(u) {
+      user = u;
     });
+  });
+  // note that before blocks run in series, so, it's safe to expect that previous
+  // before blocks are done
+  before(function() { userDecorated = decorateUser(user); });
+
+  it("is awesome", function() {
+    expect(userDecorated).to.not().be["null"]();
   });
 });
 ```
@@ -255,6 +270,13 @@ But remember about Lazy Attributes? They can be promises too!
 ```javascript
 // Javascript
 
+describe("Lazy Promises", function() {
+  lazy("user", function() { return findUserOnDB(); });
+
+  it("will load the promise and inject it!", function(user) {
+    expect(user.name).to.eq("sir");
+  });
+});
 
 ```
 
@@ -273,11 +295,14 @@ And even better, you can do it while injecting lazy dependencies!
 ```javascript
 // Javascript
 
-describe("Lazy Promises", function() {
-  lazy("user", function() { return findUserOnDB(); });
+describe("Lazy Promises Dependencies!", function() {
+  lazy("store", function() { return createStoreOnDb(); });
+  lazy("user", function(store) {
+    return createUser({store: store.id});
+  });
 
-  it("will load the promise and inject it!", function(user) {
-    expect(user.name).to.eq("sir");
+  it("will load gracefully", function(user) {
+    expect(user.store).not()["null"]();
   });
 });
 ```
