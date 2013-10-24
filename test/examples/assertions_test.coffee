@@ -21,6 +21,13 @@ describe "Assertions", ->
     it "check if the object has the property with wrong value", ->
       expect(a: 1).not().haveProperty("a", 2)
 
+  describe "include", ->
+    it "is true when the element is contained on the list", ->
+      expect(["Walter", "Batman"]).include("Batman")
+
+    it "is false when the element is not contained on the list", ->
+      expect([1, 2, 3]).not().include(5)
+
   describe "true", ->
     it "valid for true", -> expect(true).true()
     it "invalid for false", -> expect(false).not().true()

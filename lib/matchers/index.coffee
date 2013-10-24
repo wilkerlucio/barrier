@@ -26,5 +26,6 @@ require("./simple.coffee")(engine)
 require("./be.coffee")(engine)
 require("./eq.coffee")(engine)
 require("./have_property.coffee")(engine)
+require("./include.coffee")(engine)
 
 module.exports = engine
