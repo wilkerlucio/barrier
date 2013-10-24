@@ -7,7 +7,7 @@
     "barrier": "./bin/barrier"
   },
   "scripts": {
-    "test": "grunt barriercli"
+    "test": "./bin/barrier test/**/*_test.coffee"
   },
   "author": "Wilker Lucio <wilkerlucio@gmail.com>",
   "license": "MIT",
