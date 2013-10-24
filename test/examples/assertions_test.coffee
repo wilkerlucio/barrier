@@ -1,9 +1,4 @@
 describe "Assertions", ->
-  describe "be", ->
-    it "compares strings",  -> expect("string").be("string")
-    it "compares booleans", -> expect(false).be(false)
-    it "compares arrays",   -> expect([1, 2, 3]).not().be([1, 2, 3])
-
   describe "eq", ->
     it "comparing strings", -> expect("string").eq("string")
     it "comparing strings", -> expect("string").not().eq("other")
