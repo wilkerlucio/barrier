@@ -1,7 +1,7 @@
 _ = require("underscore")
+s = JSON.stringify
 
 module.exports = (engine) ->
   engine.defineMatcher "eq",
     match: (actual, expected) -> _.isEqual(actual, expected)
-    failMessage: (actual, expected) -> "expected #{JSON.stringify(actual)} to be equal to #{JSON.stringify(expected)}"
-    reverseFailMessage: (actual, expected) -> "expected #{JSON.stringify(actual)} to not be equal to #{JSON.stringify(expected)}"
+    errorMessage: (expected) -> "be equal to #{s expected}"
