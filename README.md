@@ -1,6 +1,8 @@
 Barrier
 =======
 
+!["CI Status"](https://travis-ci.org/wilkerlucio/barrier.png)
+
 A test framework that embraces promises for real
 
 Installation
