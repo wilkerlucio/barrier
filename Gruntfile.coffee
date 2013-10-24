@@ -4,7 +4,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks("grunt-contrib-watch")
 
   grunt.registerMultiTask "barriercli", "Run Barrier test suite", ->
-    Runner = require("./lib/runner")
+    done = @async()
 
     files = []
 
@@ -12,8 +12,15 @@ module.exports = (grunt) ->
       pair.src.forEach (f) ->
         files.push(Path.resolve(f))
 
-    runner = new Runner()
-    runner.run(files, @async())
+    spawnOptions =
+      opts:
+        env: process.env
+        stdio: 'inherit'
+
+      cmd: Path.resolve(Path.join(__dirname, "bin", "barrier"))
+      args: grunt.file.expand(files)
+
+    grunt.util.spawn spawnOptions, (err, output) -> done()
 
   grunt.initConfig
     pkg: grunt.file.readJSON("package.json")
@@ -26,4 +33,4 @@ module.exports = (grunt) ->
         files: ["test/**/*", "lib/**/*"]
         tasks: ["barriercli"]
 
-  grunt.registerTask "default", ["watch"]
+  grunt.registerTask "default", ["barriercli", "watch"]
