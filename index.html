@@ -46,14 +46,38 @@
 
 <p>Barrier uses RSpec-like syntax to describe tests, as so:</p>
 
-<div class="highlight highlight-coffee"><pre><span class="nx">describe</span> <span class="s">"MyObject"</span><span class="p">,</span> <span class="nf">-&gt;</span>
+<div class="highlight highlight-javascript"><pre><span class="c1">// Javascript</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s2">"MyObject"</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">it</span><span class="p">(</span><span class="s2">"sums two numbers"</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">sum</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)).</span><span class="nx">to</span><span class="p">.</span><span class="nx">eq</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+
+<div class="highlight highlight-coffee"><pre><span class="c1"># Coffeescript</span>
+
+<span class="nx">describe</span> <span class="s">"MyObject"</span><span class="p">,</span> <span class="nf">-&gt;</span>
   <span class="nx">it</span> <span class="s">"sums two numbers"</span><span class="p">,</span> <span class="nf">-&gt;</span>
     <span class="nx">expect</span><span class="p">(</span><span class="nx">sum</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)).</span><span class="nx">to</span><span class="p">.</span><span class="nx">eq</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 
 <p>You can nest describe blocks as you like:</p>
 
-<div class="highlight highlight-coffee"><pre><span class="nx">describe</span> <span class="s">"MyObject"</span><span class="p">,</span> <span class="nf">-&gt;</span>
+<div class="highlight highlight-javascript"><pre><span class="c1">// Javascript</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s2">"MyObject"</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">describe</span><span class="p">(</span><span class="s2">"some internal"</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">it</span><span class="p">(</span><span class="s2">"do something"</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">expect</span><span class="p">(</span><span class="nx">something</span><span class="p">()).</span><span class="nx">to</span><span class="p">.</span><span class="nx">eq</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+    <span class="p">});</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+
+<div class="highlight highlight-coffee"><pre><span class="c1"># Coffeescript</span>
+
+<span class="nx">describe</span> <span class="s">"MyObject"</span><span class="p">,</span> <span class="nf">-&gt;</span>
   <span class="nx">describe</span> <span class="s">"some internal"</span><span class="p">,</span> <span class="nf">-&gt;</span>
     <span class="nx">it</span> <span class="s">"do something"</span><span class="p">,</span> <span class="nf">-&gt;</span>
       <span class="nx">expect</span><span class="p">(</span><span class="nx">something</span><span class="p">()).</span><span class="nx">to</span><span class="p">.</span><span class="nx">eq</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span>
@@ -61,7 +85,22 @@
 
 <p>We support <code>before</code>, <code>beforeEach</code>, <code>after</code> and <code>afterEach</code> clauses:</p>
 
-<div class="highlight highlight-coffee"><pre><span class="nx">describe</span> <span class="s">"MyObject"</span><span class="p">,</span> <span class="nf">-&gt;</span>
+<div class="highlight highlight-javascript"><pre><span class="c1">// Javascript</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s2">"MyObject"</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">someVar</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+  <span class="nx">before</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">someVar</span> <span class="o">=</span> <span class="s2">"hello"</span><span class="p">;</span> <span class="p">});</span>
+
+  <span class="nx">it</span><span class="p">(</span><span class="s2">"must set someVar"</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">someVar</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">eq</span><span class="p">(</span><span class="s2">"hello"</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+
+<div class="highlight highlight-coffee"><pre><span class="c1"># Coffeescript</span>
+
+<span class="nx">describe</span> <span class="s">"MyObject"</span><span class="p">,</span> <span class="nf">-&gt;</span>
   <span class="nv">someVar = </span><span class="kc">null</span>
 
   <span class="nx">before</span> <span class="nf">-&gt;</span> <span class="nv">someVar = </span><span class="s">"hello"</span>
@@ -72,7 +111,20 @@
 
 <p>Also, we support lazy blocks for dependency injection:</p>
 
-<div class="highlight highlight-coffee"><pre><span class="nx">describe</span> <span class="s">"MyObject"</span><span class="p">,</span> <span class="nf">-&gt;</span>
+<div class="highlight highlight-javascript"><pre><span class="c1">// Javascript</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s2">"MyObject"</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">lazy</span><span class="p">(</span><span class="s2">"value"</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="mi">50</span><span class="p">;</span> <span class="p">});</span>
+
+  <span class="nx">it</span><span class="p">(</span><span class="s2">"loads the value"</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">value</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">eq</span><span class="p">(</span><span class="mi">50</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+
+<div class="highlight highlight-coffee"><pre><span class="c1"># Coffeescript</span>
+
+<span class="nx">describe</span> <span class="s">"MyObject"</span><span class="p">,</span> <span class="nf">-&gt;</span>
   <span class="nx">lazy</span> <span class="s">"value"</span><span class="p">,</span> <span class="nf">-&gt;</span> <span class="mi">50</span>
 
   <span class="nx">it</span> <span class="s">"loads the value"</span><span class="p">,</span> <span class="nf">(value) -&gt;</span>
@@ -83,7 +135,21 @@
 
 <p>And you can inject dependencies on each other:</p>
 
-<div class="highlight highlight-coffee"><pre><span class="nx">describe</span> <span class="s">"MyObject"</span><span class="p">,</span> <span class="nf">-&gt;</span>
+<div class="highlight highlight-javascript"><pre><span class="c1">// Javascript</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s2">"MyObject"</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">lazy</span><span class="p">(</span><span class="s2">"value"</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="mi">50</span><span class="p">;</span> <span class="p">});</span>
+  <span class="nx">lazy</span><span class="p">(</span><span class="s2">"value2"</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">value</span> <span class="o">+</span> <span class="mi">10</span><span class="p">;</span> <span class="p">});</span>
+
+  <span class="nx">it</span><span class="p">(</span><span class="s2">"loads the values"</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value2</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">value2</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">eq</span><span class="p">(</span><span class="mi">60</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+
+<div class="highlight highlight-coffee"><pre><span class="c1"># Coffeescript</span>
+
+<span class="nx">describe</span> <span class="s">"MyObject"</span><span class="p">,</span> <span class="nf">-&gt;</span>
   <span class="nx">lazy</span> <span class="s">"value"</span><span class="p">,</span> <span class="nf">-&gt;</span> <span class="mi">50</span>
   <span class="nx">lazy</span> <span class="s">"value2"</span><span class="p">,</span> <span class="nf">(value) -&gt;</span> <span class="nx">value</span> <span class="o">+</span> <span class="mi">10</span>
 
@@ -96,7 +162,23 @@
 
 <p>For basic async testing, you can call <code>async</code> into the current object to make the test wait:</p>
 
-<div class="highlight highlight-coffee"><pre><span class="nx">describe</span> <span class="s">"Awesome"</span><span class="p">,</span> <span class="nf">-&gt;</span>
+<div class="highlight highlight-javascript"><pre><span class="c1">// Javascript</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s2">"Awesome"</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">it</span><span class="p">(</span><span class="s2">"supports async testing"</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">done</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">async</span><span class="p">();</span>
+
+    <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">expect</span><span class="p">(</span><span class="kc">true</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">be</span><span class="p">[</span><span class="s2">"true"</span><span class="p">]();</span>
+      <span class="nx">done</span><span class="p">();</span>
+    <span class="p">},</span> <span class="mi">50</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+
+<div class="highlight highlight-coffee"><pre><span class="c1"># Coffeescript</span>
+
+<span class="nx">describe</span> <span class="s">"Awesome"</span><span class="p">,</span> <span class="nf">-&gt;</span>
   <span class="nx">it</span> <span class="s">"supports async testing"</span><span class="p">,</span> <span class="nf">-&gt;</span>
     <span class="nv">done = </span><span class="nx">@async</span><span class="p">()</span>
 
@@ -119,7 +201,18 @@
 
 <p>Check some examples:</p>
 
-<div class="highlight highlight-coffee"><pre><span class="nx">describe</span> <span class="s">"Using Promises"</span><span class="p">,</span> <span class="nf">-&gt;</span>
+<div class="highlight highlight-javascript"><pre><span class="c1">// Javascript</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s2">"Using Promises"</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">it</span><span class="p">(</span><span class="s2">"can use promises as values on expectations"</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">loadUser</span><span class="p">(</span><span class="mi">30</span><span class="p">)).</span><span class="nx">to</span><span class="p">.</span><span class="nx">haveProperty</span><span class="p">(</span><span class="s2">"age"</span><span class="p">,</span> <span class="nx">fetchRemoteAge</span><span class="p">());</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+
+<div class="highlight highlight-coffee"><pre><span class="c1"># Coffeescript</span>
+
+<span class="nx">describe</span> <span class="s">"Using Promises"</span><span class="p">,</span> <span class="nf">-&gt;</span>
   <span class="nx">it</span> <span class="s">"can use promises as values on expectations"</span><span class="p">,</span> <span class="nf">-&gt;</span>
     <span class="c1"># imagine that loadUser and fetchRemoteAge are functions that returns</span>
     <span class="c1"># promises that will eventually handle de values</span>
@@ -128,7 +221,20 @@
 
 <p>Also, if your test returns a promise, the runner will wait for it:</p>
 
-<div class="highlight highlight-coffee"><pre><span class="nx">describe</span> <span class="s">"Delaying the runner"</span><span class="p">,</span> <span class="nf">-&gt;</span>
+<div class="highlight highlight-javascript"><pre><span class="c1">// Javascript</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s2">"Delaying the runner"</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">it</span><span class="p">(</span><span class="s2">"will wait for my promise"</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">Q</span><span class="p">(</span><span class="s2">"value"</span><span class="p">).</span><span class="nx">delay</span><span class="p">(</span><span class="mi">30</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">expect</span><span class="p">(</span><span class="nx">v</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">eq</span><span class="p">(</span><span class="s2">"value"</span><span class="p">);</span>
+    <span class="p">});</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+
+<div class="highlight highlight-coffee"><pre><span class="c1"># Coffeescript</span>
+
+<span class="nx">describe</span> <span class="s">"Delaying the runner"</span><span class="p">,</span> <span class="nf">-&gt;</span>
   <span class="nx">it</span> <span class="s">"will wait for my promise"</span><span class="p">,</span> <span class="nf">-&gt;</span>
     <span class="nx">Q</span><span class="p">(</span><span class="s">"value"</span><span class="p">).</span><span class="nx">delay</span><span class="p">(</span><span class="mi">30</span><span class="p">).</span><span class="nx">then</span> <span class="nf">(v) -&gt;</span>
       <span class="nx">expect</span><span class="p">(</span><span class="nx">v</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">eq</span><span class="p">(</span><span class="s">"value"</span><span class="p">)</span> <span class="c1"># and that's it, Barrier will do the async handling magic</span>
@@ -136,7 +242,32 @@
 
 <p>Before and after blocks does the same, if you return promises on they, the runner will wait before going on:</p>
 
-<div class="highlight highlight-coffee"><pre><span class="nx">describe</span> <span class="s">"Before promise me..."</span><span class="p">,</span> <span class="nf">-&gt;</span>
+<div class="highlight highlight-javascript"><pre><span class="c1">// Javascript</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s2">"Before promise me..."</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">user</span><span class="p">,</span> <span class="nx">userDecorated</span><span class="p">;</span>
+
+  <span class="nx">before</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// it's important that you return the promise here so Barrier will know</span>
+    <span class="c1">// that it needs to wait for it. In Coffeescript it's more transparent</span>
+    <span class="c1">// since Coffeescript always return the last statement</span>
+    <span class="k">return</span> <span class="nx">loadUser</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">u</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">user</span> <span class="o">=</span> <span class="nx">u</span><span class="p">;</span>
+    <span class="p">});</span>
+  <span class="p">});</span>
+  <span class="c1">// note that before blocks run in series, so, it's safe to expect that previous</span>
+  <span class="c1">// before blocks are done</span>
+  <span class="nx">before</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">userDecorated</span> <span class="o">=</span> <span class="nx">decorateUser</span><span class="p">(</span><span class="nx">user</span><span class="p">);</span> <span class="p">});</span>
+
+  <span class="nx">it</span><span class="p">(</span><span class="s2">"is awesome"</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">userDecorated</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">not</span><span class="p">().</span><span class="nx">be</span><span class="p">[</span><span class="s2">"null"</span><span class="p">]();</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+
+<div class="highlight highlight-coffee"><pre><span class="c1"># Coffeescript</span>
+
+<span class="nx">describe</span> <span class="s">"Before promise me..."</span><span class="p">,</span> <span class="nf">-&gt;</span>
   <span class="nv">user = </span><span class="kc">null</span>
   <span class="nv">userDecorated = </span><span class="kc">null</span>
 
@@ -150,7 +281,20 @@
 
 <p>But remember about Lazy Attributes? They can be promises too!</p>
 
-<div class="highlight highlight-coffee"><pre><span class="nx">describe</span> <span class="s">"Lazy Promises"</span><span class="p">,</span> <span class="nf">-&gt;</span>
+<div class="highlight highlight-javascript"><pre><span class="c1">// Javascript</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s2">"Lazy Promises"</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">lazy</span><span class="p">(</span><span class="s2">"user"</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">findUserOnDB</span><span class="p">();</span> <span class="p">});</span>
+
+  <span class="nx">it</span><span class="p">(</span><span class="s2">"will load the promise and inject it!"</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">eq</span><span class="p">(</span><span class="s2">"sir"</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+
+<div class="highlight highlight-coffee"><pre><span class="c1"># Coffeescript</span>
+
+<span class="nx">describe</span> <span class="s">"Lazy Promises"</span><span class="p">,</span> <span class="nf">-&gt;</span>
   <span class="nx">lazy</span> <span class="s">"user"</span><span class="p">,</span> <span class="nf">-&gt;</span> <span class="nx">findUserOnDB</span><span class="p">()</span>
 
   <span class="nx">it</span> <span class="s">"will load the promise and inject it!"</span><span class="p">,</span> <span class="nf">(user) -&gt;</span>
@@ -159,7 +303,23 @@
 
 <p>And even better, you can do it while injecting lazy dependencies!</p>
 
-<div class="highlight highlight-coffee"><pre><span class="nx">describe</span> <span class="s">"Lazy Promises Dependencies!"</span><span class="p">,</span> <span class="nf">-&gt;</span>
+<div class="highlight highlight-javascript"><pre><span class="c1">// Javascript</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s2">"Lazy Promises Dependencies!"</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">lazy</span><span class="p">(</span><span class="s2">"store"</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">createStoreOnDb</span><span class="p">();</span> <span class="p">});</span>
+  <span class="nx">lazy</span><span class="p">(</span><span class="s2">"user"</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">store</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">createUser</span><span class="p">({</span><span class="nx">store</span><span class="o">:</span> <span class="nx">store</span><span class="p">.</span><span class="nx">id</span><span class="p">});</span>
+  <span class="p">});</span>
+
+  <span class="nx">it</span><span class="p">(</span><span class="s2">"will load gracefully"</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">user</span><span class="p">.</span><span class="nx">store</span><span class="p">).</span><span class="nx">not</span><span class="p">().</span><span class="kc">null</span><span class="p">();</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+
+<div class="highlight highlight-coffee"><pre><span class="c1"># Coffeescript</span>
+
+<span class="nx">describe</span> <span class="s">"Lazy Promises Dependencies!"</span><span class="p">,</span> <span class="nf">-&gt;</span>
   <span class="nx">lazy</span> <span class="s">"store"</span><span class="p">,</span> <span class="nf">-&gt;</span> <span class="nx">createStoreOnDb</span><span class="p">()</span>
   <span class="nx">lazy</span> <span class="s">"user"</span><span class="p">,</span> <span class="nf">(store) -&gt;</span> <span class="nx">createUser</span><span class="p">(</span><span class="nv">store: </span><span class="nx">store</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span>
 
