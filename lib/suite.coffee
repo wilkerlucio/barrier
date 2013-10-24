@@ -74,7 +74,7 @@ module.exports = class Suite
       catch err
         @currentRunContext.defer.reject(err)
     else
-      defer.resolve(@failed)
+      defer.resolve(!@failed)
 
     defer.promise
 
