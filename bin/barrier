@@ -17,5 +17,10 @@ var Runner = require("../lib/runner");
 var Path = require("path");
 var _ = require("underscore");
 
+files = _.map(program.args, function(path) { return Path.resolve(path); });
+
 runner = new Runner();
-runner.run(_.map(program.args, function(path) { return Path.resolve(path); }));
+runner.run(files)
+  .then(function(passed) {
+    process.exit(passed ? 0 : 1);
+  });

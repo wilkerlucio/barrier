@@ -6,8 +6,8 @@ module.exports = class Runner
     @reporter = new DotReporter()
     @suite = new Suite()
 
-  run: (files, callback) ->
+  run: (files) ->
     @suite.withDSL => require file for file in files
     p = @suite.run()
     @reporter.attach(p)
-    p.done(callback)
+    p

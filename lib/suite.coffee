@@ -34,6 +34,7 @@ module.exports = class Suite
     @scopes = []
     @testCases = []
     @currentRunContext = null
+    @failed = false
 
   lastScope: (ignoreNull = false) ->
     scope = @scopes[@scopes.length - 1] || null
@@ -65,7 +66,7 @@ module.exports = class Suite
       g = tempChange(global, expect: @expect, barrierContext: @currentRunContext)
 
       done.then       => defer.notify(new TestReport(tcase))
-      done.fail (err) => defer.notify(new TestReport(tcase, err))
+      done.fail (err) => @failed = true; defer.notify(new TestReport(tcase, err))
       done.finally    => g(); @run(index + 1, defer)
 
       try
@@ -73,7 +74,7 @@ module.exports = class Suite
       catch err
         @currentRunContext.defer.reject(err)
     else
-      defer.resolve(null)
+      defer.resolve(@failed)
 
     defer.promise
 
