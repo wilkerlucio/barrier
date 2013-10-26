@@ -1,7 +1,7 @@
 Barrier
 =======
 
-!["CI Status"](https://travis-ci.org/wilkerlucio/barrier.png)
+[![Build Status](https://travis-ci.org/wilkerlucio/barrier.png?branch=master)](https://travis-ci.org/wilkerlucio/barrier)
 
 A test framework that embraces promises for real
 
