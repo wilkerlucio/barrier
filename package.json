@@ -7,7 +7,7 @@
     "barrier": "./bin/barrier"
   },
   "scripts": {
-    "test": "./bin/barrier test/**/*_test.coffee"
+    "test": "./node_modules/grunt-cli/bin/grunt barriercli"
   },
   "author": "Wilker Lucio <wilkerlucio@gmail.com>",
   "license": "MIT",
@@ -25,7 +25,8 @@
   },
   "devDependencies": {
     "grunt": "~0.4.1",
-    "grunt-contrib-watch": "~0.5.3"
+    "grunt-contrib-watch": "~0.5.3",
+    "grunt-cli": "~0.1.9"
   },
   "files": [
     "bin",
