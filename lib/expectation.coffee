@@ -1,28 +1,43 @@
-Q = require("q")
 _ = require("underscore")
-matcher = require("./matchers/index.coffee")
+Q = require("q")
+Path = require("path")
 
-module.exports = class Expectation
-  constructor: (@value, @context, @reverse = false) ->
-    @to = this
+requireChai = (path) ->
+  chaiBase = Path.dirname(require.resolve("chai"))
+  require Path.join(chaiBase, path)
 
-    matcher.install(this)
+utils = requireChai("lib/chai/utils")
+assertions = requireChai("lib/chai/core/assertions")
+AssertionError = requireChai("node_modules/assertion-error")
 
-  not: -> new Expectation(@value, @context, !@reverse)
+chai =
+  "AssertionError": AssertionError
 
-  runMatcher: (matcher, args) ->
-    argsWithCurrent = [@value].concat(args)
+requireChai("lib/chai/assertion")(chai, utils)
 
-    task = Q.all(argsWithCurrent).then (values) =>
-      Q(matcher.match.apply(this, values)).then (passed) =>
-        if @raiseError(passed)
-          throw new Error(@errorMessage(matcher, values))
+Assertion = chai.Assertion
 
-    @context.pushTask(task)
+module.exports = class Expectation extends Assertion
+  constructor: (obj, msg, stack, @context) -> super
 
-    this
+  @overwriteMethod:    (name, fn) -> super(name, @promisify(fn))
+  @addMethod:          (name, fn) -> super(name, @promisify(fn))
+  @addChainableMethod: (name, fn, chainingBehavior) ->
+    super(name, @promisify(fn), chainingBehavior)
 
-  raiseError: (bool) -> if @reverse then bool else !bool
-  errorMessage: (matcher, values) ->
-    fnName = if @reverse then "reverseFailMessage" else "failMessage"
-    matcher[fnName].apply(matcher, values)
+  @promisify: (fn) ->
+    (args...) ->
+      task = @resolveFlags().then =>
+        Q.all(args).then (values) => fn.apply(this, values)
+
+      @context.pushTask(task)
+
+  resolveFlags: ->
+    flags = _.keys(@__flags || {})
+    promises = _.map flags, (flag) =>
+      Q(@__flags[flag]).then (value) =>
+        @__flags[flag] = value
+
+    Q.all(promises)
+
+assertions("Assertion": Expectation, utils)

@@ -20,7 +20,8 @@
     "coffee-script": "~1.6.3",
     "underscore": "~1.5.2",
     "colors": "~0.6.2",
-    "commander": "~2.0.0"
+    "commander": "~2.0.0",
+    "chai": "~1.8.1"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

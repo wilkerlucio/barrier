@@ -1,6 +1,5 @@
 _ = require("underscore")
 Q = require("q")
-Match = require("./matchers/index.coffee")
 
 extractArgs = (fn) ->
   string = fn.toString()
@@ -12,7 +11,6 @@ extractArgs = (fn) ->
 
 module.exports = class RunContext
   constructor: ->
-    @match = Match
     @tasks = []
     @errors = []
     @lazys = {}
