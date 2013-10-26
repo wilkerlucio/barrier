@@ -1,3 +1,5 @@
+{dv} = require("./test_helper.coffee")
+
 describe "Assertions", ->
   describe "eq", ->
     it "comparing strings", -> expect("string").eq("string")
@@ -18,18 +20,18 @@ describe "Assertions", ->
 
   describe "work with members", ->
     it "check for members", ->
-      expect([1, 2, 3]).to.include.members([1, 3])
+      expect([1, 2, 3]).to.include.members(dv([1, 3]))
 
   describe "include", ->
     it "is true when the element is contained on the list", ->
       expect(["Walter", "Batman"]).include("Batman")
 
     it "is false when the element is not contained on the list", ->
-      expect([1, 2, 3]).not.include(5)
+      expect([1, 2, 3]).to.not.include(5)
 
   describe "true", ->
-    it "valid for true", -> expect(true).true
-    it "invalid for false", -> expect(false).not.true
+    it "valid for true", -> expect(true).to.be.true
+    it "invalid for false", -> expect(false).to.not.be.true
 
   describe "false", ->
     it "valid for false", -> expect(false).false

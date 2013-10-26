@@ -31,18 +31,12 @@ module.exports = class Suite
       timeout: 2000
     , options
 
-    @scopes = []
+    @scopes = [new Scope(null, null)]
     @testCases = []
     @currentRunContext = null
     @failed = false
 
-  lastScope: (ignoreNull = false) ->
-    scope = @scopes[@scopes.length - 1] || null
-
-    if !scope && !ignoreNull
-      throw new Error("You need to be inside of a describe block to call this command")
-
-    scope
+  lastScope: -> _.last @scopes
 
   runContext: -> @currentRunContext || null
 

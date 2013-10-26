@@ -31,8 +31,9 @@ module.exports = class Scope
 
     block
 
-  fullTitle: ->
+  fullTitle: (titles = []) ->
     if @parent
-      "#{@parent.fullTitle()} #{@title}"
+      titles.unshift(@title)
+      @parent.fullTitle(titles)
     else
-      @title
+      _.compact(titles).join(" ")

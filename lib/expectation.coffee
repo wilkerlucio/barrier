@@ -10,8 +10,7 @@ utils = requireChai("lib/chai/utils")
 assertions = requireChai("lib/chai/core/assertions")
 AssertionError = requireChai("node_modules/assertion-error")
 
-chai =
-  "AssertionError": AssertionError
+chai = "AssertionError": AssertionError
 
 requireChai("lib/chai/assertion")(chai, utils)
 
