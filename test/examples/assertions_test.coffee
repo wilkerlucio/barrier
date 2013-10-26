@@ -6,7 +6,7 @@ describe "Assertions", ->
     it "compares lists",    -> expect(["a", "b", "c"]).eql(["a", "b", "c"])
     it "compares objects",  -> expect(a: 1).eql(a: 1)
 
-  describe "haveProperty", ->
+  describe "property", ->
     it "check if the object has the property", ->
       expect(a: 1).have.property("a")
 
@@ -15,6 +15,10 @@ describe "Assertions", ->
 
     it "check if the object has the property with wrong value", ->
       expect(a: 1).not.have.property("a", 2)
+
+  describe "work with members", ->
+    it "check for members", ->
+      expect([1, 2, 3]).to.include.members([1, 3])
 
   describe "include", ->
     it "is true when the element is contained on the list", ->

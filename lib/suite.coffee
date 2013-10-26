@@ -97,4 +97,4 @@ module.exports = class Suite
 
   lazy: (name, block) => @lastScope().addLazy(name, block)
 
-  expect: (value) => new Exceptation(value, undefined, undefined, @runContext())
+  expect: (value) => new Exceptation(value, undefined, undefined)
