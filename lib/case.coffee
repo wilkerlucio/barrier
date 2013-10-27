@@ -6,11 +6,9 @@ module.exports = class Case
 
   run: ->
     context = barrierContext
-    before = @runList(@scope.allBeforeBlocks())
 
-    chain = before
-      .then =>
-        @runBlock(context)
+    chain = @runList(@scope.allBeforeBlocks())
+      .then => context.injectFunction(@block)
 
     context.pushTask(chain, "test main chain")
 
@@ -18,9 +16,6 @@ module.exports = class Case
     @runList(@scope.allAfterEachBlocks())
       .then =>
         @runList(@scope.afterBlocks) unless next and next.scope == @scope
-
-  runBlock: (context) ->
-    context.inject(@block).then (args) => Q @block.apply(context, args)
 
   runList: (remaining, defer = Q.defer()) ->
     if remaining.length > 0

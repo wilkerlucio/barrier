@@ -24,9 +24,14 @@ module.exports = class RunContext
 
     task
 
-  inject: (fn) -> @load.apply(this, extractArgs(fn))
+  inject: (param) ->
+    if _.isFunction(param)
+      @injectFunction(param)
+    else
+      @injectParams(param)
 
-  load: (args...) ->
+  injectFunction: (fn) -> @injectParams(extractArgs(fn)).then (args) -> Q fn.apply(barrierContext, args)
+  injectParams: (args) ->
     {scope} = @case
 
     promises = _.map args, (arg) ->

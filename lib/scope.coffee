@@ -8,9 +8,9 @@ class LazyBlock
     context = barrierContext
 
     if @persist
-      @_value ?= context.inject(@block).then (args) => @block.apply(context, args)
+      @_value ?= context.injectFunction(@block)
     else
-      context.lazys[@name] ?= context.inject(@block).then (args) => @block.apply(context, args)
+      context.lazys[@name] ?= context.injectFunction(@block)
 
 module.exports = class Scope
   constructor: (@title, @parent) ->
