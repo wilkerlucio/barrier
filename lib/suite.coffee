@@ -36,6 +36,8 @@ module.exports = class Suite
     @runContext = null
     @failed = false
 
+    @describe.skip = (title, block) => @describe(title, block, skip: true)
+
   lastScope: -> _.last @scopes
 
   withDSL: (callback) ->
@@ -51,10 +53,13 @@ module.exports = class Suite
 
   run: (index = 0, defer = Q.defer()) ->
     tcase = @testCases[index]
-    @runContext = new RunContext(tcase)
-    done = @runContext.done.timeout(@options.timeout)
 
     if tcase
+      return @run(index + 1, defer) if tcase.flag("skip")
+
+      @runContext = new RunContext(tcase)
+      done = @runContext.done.timeout(@options.timeout)
+
       g = tempChange(global, expect: @expect, barrierContext: @runContext)
 
       done.then       => defer.notify(new TestReport(tcase))
@@ -74,14 +79,24 @@ module.exports = class Suite
 
   # DSL
 
-  describe: (title, block = ->) =>
-    @scopes.push(new Scope(title, @lastScope(true)))
+  describe: (title, block, flags = {}) =>
+    unless _.isFunction(block)
+      flags.skip = true
+      block = ->
+
+    scope = new Scope(title, @lastScope(true))
+    scope.__flags = flags
+
+    @scopes.push(scope)
     block()
     @scopes.pop()
 
-  it: (title, block) =>
+  it: (title, block, flags = {}) =>
+    flags.skip = true unless block
+
     scope = @lastScope()
     ccase = new Case(title, block, scope, this)
+    ccase.__flags = flags
     @testCases.push(ccase)
 
   before:     (block) => @lastScope().beforeBlocks.push(new RunOnceBlock(block))

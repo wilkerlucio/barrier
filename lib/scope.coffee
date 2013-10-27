@@ -45,6 +45,12 @@ module.exports = class Scope
 
     block
 
+  flag: (name) ->
+    return @__flags[name] unless !@__flags or _.isUndefined(@__flags[name])
+    return @parent.flag(name) if @parent
+
+    undefined
+
   fullTitle: (titles = []) ->
     if @parent
       titles.unshift(@title)

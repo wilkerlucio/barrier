@@ -32,5 +32,10 @@ module.exports = class Case
 
     defer.promise
 
+  flag: (name) ->
+    return @__flags[name] unless !@__flags or _.isUndefined(@__flags[name])
+
+    @scope.flag(name)
+
   fullTitle: ->
     "#{@scope.fullTitle()} #{@title}"
