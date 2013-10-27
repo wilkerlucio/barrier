@@ -17,15 +17,24 @@ requireChai("lib/chai/assertion")(chai, utils)
 Assertion = chai.Assertion
 
 module.exports = class Expectation extends Assertion
-  @overwriteMethod:    (name, fn) -> super(name, @promisify(fn, name))
   @addMethod:          (name, fn) -> super(name, @promisify(fn, name))
   @addChainableMethod: (name, fn, chainingBehavior) ->
     super(name, @promisify(fn, name), chainingBehavior)
 
+  @overwriteMethod: (name, fn) ->
+    _method = Expectation::[name]
+    _super = -> this
+
+    _super = _method if _method and _.isFunction(_method)
+
+    Expectation::[name] = ->
+      result = Expectation.promisify(fn(_super)).apply(this, arguments)
+
   @promisify: (fn, name = null) ->
     (args...) ->
-      task = @resolveFlags().then =>
-        Q.all(args).then (values) => fn.apply(this, values)
+      task = @resolveFlags()
+        .then => Q.all(args)
+        .then (values) => fn.apply(this, values)
 
       barrierContext.pushTask(task, "expectation #{name}")
 
