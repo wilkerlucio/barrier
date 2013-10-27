@@ -19,3 +19,16 @@ describe "After Blocks", ->
   it "change all", ->
     expect(allAfter).eq(true)
     expect(eachAfter).eq(true)
+
+  describe "run order", ->
+    value = null
+
+    afterEach -> value = true
+
+    it "wait to run the after blocks", ->
+      done = @async()
+
+      setTimeout ->
+        expect(value).null
+        done()
+      , 50

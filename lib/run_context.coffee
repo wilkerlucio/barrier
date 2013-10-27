@@ -24,12 +24,14 @@ module.exports = class RunContext
 
     task
 
-  inject: (fn, scope) ->
-    args = extractArgs(fn)
+  inject: (fn) -> @load.apply(this, extractArgs(fn))
 
-    promises = _.map args, (arg) =>
+  load: (args...) ->
+    {scope} = @case
+
+    promises = _.map args, (arg) ->
       lazy = scope.lazyFactory(arg)
-      lazy.value(this, scope)
+      lazy.value()
 
     Q.all(promises)
 

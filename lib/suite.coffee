@@ -33,12 +33,10 @@ module.exports = class Suite
 
     @scopes = [new Scope(null, null)]
     @testCases = []
-    @currentRunContext = null
+    @runContext = null
     @failed = false
 
   lastScope: -> _.last @scopes
-
-  runContext: -> @currentRunContext || null
 
   withDSL: (callback) ->
     tempChange global,
@@ -53,20 +51,22 @@ module.exports = class Suite
 
   run: (index = 0, defer = Q.defer()) ->
     tcase = @testCases[index]
-    @currentRunContext = new RunContext(tcase)
-    done = @currentRunContext.done.timeout(@options.timeout)
+    @runContext = new RunContext(tcase)
+    done = @runContext.done.timeout(@options.timeout)
 
     if tcase
-      g = tempChange(global, expect: @expect, barrierContext: @currentRunContext)
+      g = tempChange(global, expect: @expect, barrierContext: @runContext)
 
       done.then       => defer.notify(new TestReport(tcase))
       done.fail (err) => @failed = true; defer.notify(new TestReport(tcase, err))
-      done.finally    => g(); @run(index + 1, defer)
+      done.finally    =>
+        tcase.runAfters(@testCases[index + 1] || null).then =>
+          g(); @run(index + 1, defer)
 
       try
-        tcase.run(@currentRunContext, @testCases[index + 1] || null)
+        tcase.run()
       catch err
-        @currentRunContext.defer.reject(err)
+        @runContext.defer.reject(err)
     else
       defer.resolve(!@failed)
 

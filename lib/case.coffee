@@ -4,21 +4,23 @@ Q = require("q")
 module.exports = class Case
   constructor: (@title, @block, @scope) ->
 
-  run: (context, next) ->
+  run: ->
+    context = barrierContext
     before = @runList(@scope.allBeforeBlocks())
 
     chain = before
       .then =>
         @runBlock(context)
-      .then =>
-        @runList(@scope.allAfterEachBlocks())
-          .then =>
-            @runList(@scope.afterBlocks) unless next and next.scope == @scope
 
     context.pushTask(chain, "test main chain")
 
+  runAfters: (next) ->
+    @runList(@scope.allAfterEachBlocks())
+      .then =>
+        @runList(@scope.afterBlocks) unless next and next.scope == @scope
+
   runBlock: (context) ->
-    context.inject(@block, @scope).then (args) => Q @block.apply(context, args)
+    context.inject(@block).then (args) => Q @block.apply(context, args)
 
   runList: (remaining, defer = Q.defer()) ->
     if remaining.length > 0
