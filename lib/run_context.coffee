@@ -10,22 +10,19 @@ extractArgs = (fn) ->
     []
 
 module.exports = class RunContext
-  constructor: ->
+  constructor: (@case) ->
     @tasks = []
-    @errors = []
     @lazys = {}
 
     @defer = Q.defer()
     @done = @defer.promise
 
-  pushTask: (task) ->
-    task.catch(@pushError)
+  pushTask: (task, description = null) ->
+    task.description = description
     task.finally(@taskDone)
     @tasks.push(task)
 
     task
-
-  pushError: (err) => @errors.push(err)
 
   inject: (fn, scope) ->
     args = extractArgs(fn)
@@ -34,12 +31,14 @@ module.exports = class RunContext
       lazy = scope.lazyFactory(arg)
       lazy.value(this, scope)
 
-    @pushTask Q.all(promises)
+    Q.all(promises)
 
   taskDone: =>
-    if @allTasksDone()
-      if @errors.length > 0
-        @defer.reject(@errors[0])
+    if @done.isPending() and @allTasksDone()
+      error = _.find @tasks, (t) -> t.isRejected()
+
+      if error
+        @defer.reject(error.inspect().reason)
       else
         @defer.resolve(null)
 
@@ -47,6 +46,6 @@ module.exports = class RunContext
 
   async: ->
     defer = Q.defer()
-    @pushTask(defer.promise)
+    @pushTask(defer.promise, "async call")
 
     -> defer.resolve(null)

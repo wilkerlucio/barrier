@@ -53,7 +53,7 @@ module.exports = class Suite
 
   run: (index = 0, defer = Q.defer()) ->
     tcase = @testCases[index]
-    @currentRunContext = new RunContext()
+    @currentRunContext = new RunContext(tcase)
     done = @currentRunContext.done.timeout(@options.timeout)
 
     if tcase
