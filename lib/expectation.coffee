@@ -31,6 +31,14 @@ module.exports = class Expectation extends Assertion
 
       this
 
+  flag: (name, value) ->
+    if arguments.length == 1
+      @__flags[name]
+    else
+      @__flags[name] = value
+
+      this
+
   resolveFlags: ->
     flags = _.keys(@__flags || {})
     promises = _.map flags, (flag) =>
