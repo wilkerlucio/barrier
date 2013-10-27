@@ -89,6 +89,6 @@ module.exports = class Suite
   after:      (block) => @lastScope().afterBlocks.push(new RunOnceBlock(block))
   afterEach:  (block) => @lastScope().afterEachBlocks.push(new RunBlock(block))
 
-  lazy: (name, block) => @lastScope().addLazy(name, block)
+  lazy: (args...) => @lastScope().addLazy(args...)
 
-  expect: (value) => new Exceptation(value, undefined, undefined)
+  expect: (args...) => new Exceptation(args...)
