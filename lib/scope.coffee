@@ -2,13 +2,13 @@ _ = require("underscore")
 Q = require("q")
 
 class LazyBlock
-  constructor: (@block, @persist) ->
+  constructor: (@block, @persist, @name) ->
 
   value: (context, scope) ->
     if @persist
-      @_value ||= context.inject(@block, scope).then (args) => @block.apply(context, args)
+      @_value ?= context.inject(@block, scope).then (args) => @block.apply(context, args)
     else
-      context.lazys[arg] ||= context.inject(@block, scope).then (args) => @block.apply(context, args)
+      context.lazys[@name] ?= context.inject(@block, scope).then (args) => @block.apply(context, args)
 
 module.exports = class Scope
   constructor: (@title, @parent) ->
@@ -32,7 +32,7 @@ module.exports = class Scope
   addLazy: (name, persist, block) ->
     [block, persist] = [persist, false] if arguments.length == 2
 
-    @lazyBlocks[name] = new LazyBlock(block, persist)
+    @lazyBlocks[name] = new LazyBlock(block, persist, name)
 
   lazyFactory: (name) ->
     block = @lazyBlocks[name]

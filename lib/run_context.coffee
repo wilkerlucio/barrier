@@ -34,7 +34,7 @@ module.exports = class RunContext
       lazy = scope.lazyFactory(arg)
       lazy.value(this, scope)
 
-    Q.all promises
+    @pushTask Q.all(promises)
 
   taskDone: =>
     if @allTasksDone()

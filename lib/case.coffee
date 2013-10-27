@@ -8,14 +8,17 @@ module.exports = class Case
     before = @runList(@scope.allBeforeBlocks())
     context.pushTask(before)
 
-    chain = before.then =>
-      blockP = @runBlock(context)
-      context.pushTask(blockP)
-      blockP.then =>
+    chain = before
+      .then =>
+        blockP = @runBlock(context)
+        context.pushTask(blockP)
+      .then =>
         context.pushTask(@runList(@scope.allAfterEachBlocks()))
         context.pushTask(@runList(@scope.afterBlocks)) unless next and next.scope == @scope
 
-    chain.catch (err) -> context.pushTask(Q.reject(err))
+    # chain.catch (err) -> context.pushTask(Q.reject(err))
+    context.pushTask(chain)
+    chain
 
   runBlock: (context) ->
     context.inject(@block, @scope).then (args) => Q @block.apply(context, args)
