@@ -31,9 +31,8 @@ module.exports = class RunContext
     args = extractArgs(fn)
 
     promises = _.map args, (arg) =>
-      block = scope.lazyFactory(arg)
-
-      @lazys[arg] ||= @inject(block, scope).then (args) => block.apply(this, args)
+      lazy = scope.lazyFactory(arg)
+      lazy.value(this, scope)
 
     Q.all promises
 

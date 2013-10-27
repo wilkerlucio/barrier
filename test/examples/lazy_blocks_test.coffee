@@ -31,3 +31,12 @@ describe "Lazy Blocks", ->
 
       it "loads the child first", (onchild) -> expect(onchild).eq("child")
       it "loads from proper parents", (onroot) -> expect(onroot).eq("root")
+
+  describe "Lazy context cache", ->
+    lazy "ctx", true, -> {n: 1}
+
+    it "run here", (ctx) ->
+      ctx.x = 5
+
+    it "accumulates", (ctx) ->
+      expect(ctx).property("x", 5)
