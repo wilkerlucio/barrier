@@ -1,7 +1,5 @@
 _            = require("underscore")
 Q            = require("q")
-RunBlock     = require("./run_block.coffee")
-RunOnceBlock = require("./run_once_block.coffee")
 Scope        = require("./scope.coffee")
 Case         = require("./case.coffee")
 Exceptation  = require("./expectation.coffee")
@@ -99,10 +97,10 @@ module.exports = class Suite
     ccase.__flags = flags
     @testCases.push(ccase)
 
-  before:     (block) => @lastScope().beforeBlocks.push(new RunOnceBlock(block))
-  beforeEach: (block) => @lastScope().beforeBlocks.push(new RunBlock(block))
-  after:      (block) => @lastScope().afterBlocks.push(new RunOnceBlock(block))
-  afterEach:  (block) => @lastScope().afterEachBlocks.push(new RunBlock(block))
+  before:     (block) => @lastScope().beforeBlocks.push(_.once(block))
+  beforeEach: (block) => @lastScope().beforeBlocks.push(block)
+  after:      (block) => @lastScope().afterBlocks.push(_.once(block))
+  afterEach:  (block) => @lastScope().afterEachBlocks.push(block)
 
   lazy: (args...) => @lastScope().addLazy(args...)
 

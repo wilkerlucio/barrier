@@ -22,7 +22,7 @@ module.exports = class Case
       current = remaining.shift()
 
       try
-        p = Q(current.run())
+        p = Q(current())
         p.then => @runList(remaining, defer)
         p.fail (err) -> defer.reject(err)
       catch err
