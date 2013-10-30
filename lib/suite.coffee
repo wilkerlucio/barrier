@@ -63,7 +63,7 @@ module.exports = class Suite
       done.then       => defer.notify(new TestReport(tcase))
       done.fail (err) => @failed = true; defer.notify(new TestReport(tcase, err))
       done.finally    =>
-        tcase.runAfters(@testCases[index + 1] || null).then =>
+        tcase.runAfters(@testCases[index + 1] || null).timeout(@options.timeout).finally =>
           g(); @run(index + 1, defer)
 
       try
