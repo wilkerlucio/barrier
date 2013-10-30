@@ -40,3 +40,12 @@ describe "Lazy Blocks", ->
 
     it "accumulates", (ctx) ->
       expect(ctx).property("x", 5)
+
+  describe "lazy on before blocks", ->
+    lazy "blue", -> "meth"
+
+    val = null
+
+    beforeEach (blue) -> val = blue
+
+    it "injects on before", -> expect(val).eq("meth")

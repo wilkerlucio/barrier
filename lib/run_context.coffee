@@ -30,7 +30,9 @@ module.exports = class RunContext
     else
       @injectParams(param)
 
-  injectFunction: (fn) -> @injectParams(extractArgs(fn)).then (args) -> Q fn.apply(barrierContext, args)
+  injectFunction: (fn) -> @injectParams(extractArgs(fn)).then (args) ->
+    Q.promised(fn).apply(barrierContext, args)
+
   injectParams: (args) ->
     {scope} = @case
 
@@ -55,4 +57,8 @@ module.exports = class RunContext
     defer = Q.defer()
     @pushTask(defer.promise, "async call")
 
-    -> defer.resolve(null)
+    (err) ->
+      if err == undefined
+        defer.resolve(null)
+      else
+        defer.reject(err)
