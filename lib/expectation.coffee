@@ -30,6 +30,8 @@ module.exports = class Expectation extends Assertion
     Expectation::[name] = ->
       result = Expectation.promisify(fn(_super)).apply(this, arguments)
 
+  @addProperty: (name, getter) -> super(name, @promisify(getter, name))
+
   @promisify: (fn, name = null) ->
     (args...) ->
       task = @resolveFlags()
