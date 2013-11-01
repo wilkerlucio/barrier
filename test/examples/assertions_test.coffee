@@ -44,3 +44,7 @@ describe "Assertions", ->
     it "invalid for false", -> expect(false).not.null
     it "invalid for undefined", -> expect(undefined).not.null
     it "works with promise", -> expect(Q(null)).null
+
+  describe "reject", ->
+    it "assert that a promise is rejected", ->
+      expect(-> Q.reject("error")).reject()

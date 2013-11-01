@@ -58,4 +58,16 @@ module.exports = class Expectation extends Assertion
 
     Q.all(promises)
 
+Expectation.addMethod "reject", (args...) ->
+  fn = @flag("object")
+
+  promise = fn()
+    .then(-> ->)
+    .catch((err) -> -> throw err)
+    .then (resolvedFn) => @flag("object", resolvedFn).throw(args...)
+
+  barrierContext.pushTask(promise)
+
+  this
+
 assertions("Assertion": Expectation, utils)
