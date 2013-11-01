@@ -30,17 +30,15 @@ module.exports = class RunContext
     else
       @injectParams(param)
 
-  injectFunction: (fn) -> @injectParams(extractArgs(fn)).then (args) ->
-    Q.promised(fn).apply(barrierContext, args)
+  injectFunction: (fn) -> Q.promised(fn).apply(barrierContext, @injectPromises(extractArgs(fn)))
+  injectParams: (args) -> Q.all @injectPromises(args)
 
-  injectParams: (args) ->
+  injectPromises: (args) ->
     {scope} = @case
 
-    promises = _.map args, (arg) ->
+    _.map args, (arg) ->
       lazy = scope.lazyFactory(arg)
       lazy.value()
-
-    Q.all(promises)
 
   taskDone: =>
     if @done.isPending() and @allTasksDone()

@@ -32,15 +32,11 @@ module.exports = class Expectation extends Assertion
 
   @addProperty: (name, getter) -> super(name, @promisify(getter, name))
 
-  @promisify: (fn, name = null) ->
-    (args...) ->
-      task = @resolveFlags()
-        .then => Q.all(args)
-        .then (values) => fn.apply(this, values)
+  @promisify: (fn, name = null) -> ->
+    task = @resolveFlags().then => Q.promised(fn)
+    barrierContext.pushTask(task, "expectation #{name}")
 
-      barrierContext.pushTask(task, "expectation #{name}")
-
-      this
+    this
 
   flag: (name, value) ->
     if arguments.length == 1
