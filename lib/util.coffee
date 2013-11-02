@@ -1,6 +1,7 @@
+_ = require("underscore")
 Q = require("q")
 
-module.exports =
+module.exports = util =
   reversibleChange: (obj, extension, block) ->
     backup = {}
 
@@ -21,3 +22,21 @@ module.exports =
       Q(block()).then -> restore()
     else
       restore
+
+  qSequence: (sequence, options = {}) ->
+    sequence ?= []
+
+    {interceptor, prepare, arg} = options = _.extend
+      prepare: _.identity
+      interceptor: _.identity
+      arg: null
+    , options
+
+
+    Q(interceptor(arg)).then (res) ->
+      return res if sequence.length == 0
+
+      fn = prepare sequence.shift()
+
+      next = if _.isFunction(fn) then Q.promised(fn)(res) else fn
+      next.then (prep) -> util.qSequence(sequence, _.extend(options, arg: prep))
