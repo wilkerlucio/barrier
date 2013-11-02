@@ -18,3 +18,11 @@ describe "Suite", ->
     expect(test.title).eq "x"
     expect(test.block).eq b
     expect(test.scope).eq suite.scopes[0]
+
+  it "scope nesting", (suite) ->
+    scope = test = null
+
+    scope = suite.describe "", ->
+      test = suite.test "", ->
+
+    expect(test.scope).eq(scope)

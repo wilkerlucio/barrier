@@ -40,3 +40,10 @@ module.exports = util =
 
       next = if _.isFunction(fn) then Q.promised(fn)(res) else fn
       next.then (prep) -> util.qSequence(sequence, _.extend(options, arg: prep))
+
+  flag: (obj, key, value) ->
+    return null unless obj
+    flags = obj.__flags || (obj.__flags = {})
+
+    return flags[key] if arguments.length == 2
+    flags[key] = value

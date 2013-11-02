@@ -33,48 +33,52 @@ describe "Util", ->
 
   describe "qSequence", ->
     qs = util.qSequence
+    assertSequenceResult = (chain..., result) ->
+      options = {}
+
+      if chain.length > 1 and (result.interceptor? or result.prepare? or result.arg?)
+        [options, result] = [result, chain.pop()]
+
+      expect(qs(chain, options)).eq(result)
+
+    lazy "fx",  -> -> "x"
+    lazy "fy",  -> -> "y"
+    lazy "fup", -> (x) -> x.toUpperCase()
+    lazy "fid", -> _.identity
 
     it "returns a promise", ->
       expect(qs()).hold.respondTo("then")
       expect(qs([])).hold.respondTo("then")
       expect(qs(null)).hold.respondTo("then")
 
-    it "runs once function", ->
-      f = -> Q("x")
+    it "runs once function", -> assertSequenceResult Q("x"), "x"
 
-      expect(qs [f]).eq("x")
+    it "returns value from last item", (fx, fy) -> assertSequenceResult fx, fy, "y"
 
-    it "returns value from last item", ->
-      f = -> "x"
-      f2 = -> "y"
+    it "chain the results", (fx, fup) -> assertSequenceResult fx, fup, "X"
 
-      expect(qs [f, f2]).eq "y"
+    it "can intercept the chain", (fx, fup) ->
+      assertSequenceResult fx, fup, "XZz", interceptor: (value) -> value + "z"
 
-    it "chain the results", ->
-      f = -> "x"
-      f2 = (x) -> x.toUpperCase()
+    it "can prepare the promises", (fid) ->
+      assertSequenceResult fid, "x", prepare: (fn) -> -> fn("x")
 
-      expect(qs [f, f2]).eq "X"
+    it "handles returning promises on prepare", (fid) ->
+      assertSequenceResult fid, "x", prepare: (fn) -> Q "x"
 
-    it "can intercept the chain", ->
-      f = -> "x"
-      f2 = (x) -> x.toUpperCase()
+  describe "flag", ->
+    flag = util.flag
 
-      promise = qs [f, f2], interceptor: (value) -> value + "z"
+    it "returns null when sending all null", ->
+      expect(flag()).null
+      expect(flag(null)).null
+      expect(flag(null, null)).null
+      expect(flag(null, null, null)).null
 
-      expect(promise).eq "XZz"
+    it "returns undefined if the flag don't exists on the user", ->
+      expect(flag({}, "x")).undefined
 
-    it "can prepare the promises", ->
-      f = (x) -> x
-
-      promise = qs [f], prepare: (fn) -> -> fn("x")
-
-      expect(promise).eq "x"
-
-    it "handles returning promises on prepare", ->
-      f = (x) -> x
-
-      promise = qs [f], prepare: (fn) -> Q("x")
-
-      expect(promise).eq "x"
-
+    it "saves and loads the value", ->
+      obj = {}
+      flag(obj, "x", 1)
+      expect(flag(obj, "x")).eq(1)

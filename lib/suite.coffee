@@ -44,20 +44,18 @@ module.exports = class Suite extends EventEmitter
 
     if tcase
       @runContext = new RunContext(tcase)
-      done = @runContext.done.timeout(@options.timeout)
-
       g = reversibleChange(global, expect: @expect, barrierContext: @runContext)
 
-      done.then =>
-        @emit("pass", tcase)
-      done.fail (err) =>
-        @failed = true
-        @emit("fail", tcase, err)
-      done.finally    =>
-        tcase.runAfters(@testCases[index + 1] || null).timeout(@options.timeout).finally =>
-          g()
-          @emit("test end", tcase)
-          @runCase(index + 1, defer)
+      @runContext.done.timeout(@options.timeout)
+        .then(=> @emit("pass", tcase))
+        .fail (err) =>
+          @failed = true
+          @emit("fail", tcase, err)
+        .finally =>
+          tcase.runAfters(@testCases[index + 1] || null).timeout(@options.timeout).finally =>
+            g()
+            @emit("test end", tcase)
+            @runCase(index + 1, defer)
 
       try
         @emit("test", tcase)
@@ -72,11 +70,10 @@ module.exports = class Suite extends EventEmitter
   # DSL
 
   describe: (title, block) =>
-    scope = new Scope(title, @currentScope())
-
-    @scopes.push(scope)
-    block()
-    @scopes.pop()
+    _.tap new Scope(title, @currentScope()), (scope) =>
+      @scopes.push(scope)
+      block()
+      @scopes.pop()
 
   it: (title, block) =>
     _.tap new Case(title, block, @currentScope(), this), (ccase) =>
