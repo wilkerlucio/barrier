@@ -45,5 +45,6 @@ module.exports = util =
     return null unless obj
     flags = obj.__flags || (obj.__flags = {})
 
+    return flags if arguments.length == 1
     return flags[key] if arguments.length == 2
-    flags[key] = value
+    flags[key] = value; obj

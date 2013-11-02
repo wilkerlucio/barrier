@@ -69,6 +69,9 @@ describe "Util", ->
   describe "flag", ->
     flag = util.flag
 
+    # flag returns the obj when called with 3 arguments
+    lazy "flagged", -> flag({}, "x", 1)
+
     it "returns null when sending all null", ->
       expect(flag()).null
       expect(flag(null)).null
@@ -78,7 +81,8 @@ describe "Util", ->
     it "returns undefined if the flag don't exists on the user", ->
       expect(flag({}, "x")).undefined
 
-    it "saves and loads the value", ->
-      obj = {}
-      flag(obj, "x", 1)
-      expect(flag(obj, "x")).eq(1)
+    it "saves and loads the value", (flagged) ->
+      expect(flag(flagged, "x")).eq(1)
+
+    it "returns the flag hash when sending the object only", (flagged) ->
+      expect(flag(flagged)).eql(x:1)

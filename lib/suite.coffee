@@ -1,12 +1,12 @@
-_                  = require("underscore")
-Q                  = require("q")
-Scope              = require("./scope.coffee")
-Case               = require("./case.coffee")
-Exceptation        = require("./expectation.coffee")
-RunContext         = require("./run_context.coffee")
-TestReport         = require("./test_report.coffee")
-{EventEmitter}     = require("events")
-{reversibleChange} = require("./util.coffee")
+_                        = require("underscore")
+Q                        = require("q")
+Scope                    = require("./scope.coffee")
+Case                     = require("./case.coffee")
+Exceptation              = require("./expectation.coffee")
+RunContext               = require("./run_context.coffee")
+TestReport               = require("./test_report.coffee")
+{EventEmitter}           = require("events")
+{reversibleChange, flag} = require("./util.coffee")
 
 module.exports = class Suite extends EventEmitter
   constructor: (options = {})->
@@ -69,14 +69,27 @@ module.exports = class Suite extends EventEmitter
 
   # DSL
 
-  describe: (title, block) =>
-    _.tap new Scope(title, @currentScope()), (scope) =>
-      @scopes.push(scope)
-      block()
-      @scopes.pop()
+  describe: (title = null, flags, block) =>
+    if _.isFunction(flags)
+      block = flags
+      flags = {}
 
-  it: (title, block) =>
+    _.tap new Scope(title, @currentScope()), (scope) =>
+      flag(scope, key, value) for key, value of flags
+
+      if block
+        @scopes.push(scope)
+        block()
+        @scopes.pop()
+
+  it: (title, flags, block) =>
+    if _.isFunction(flags)
+      block = flags
+      flags = {}
+
     _.tap new Case(title, block, @currentScope(), this), (ccase) =>
+      flag(ccase, key, value) for key, value of flags
+      flag(ccase, "pending", true) unless _.isFunction block
       @testCases.push(ccase)
 
   test: => @it.apply(this, arguments)

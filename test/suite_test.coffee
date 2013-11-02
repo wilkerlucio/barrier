@@ -1,4 +1,4 @@
-[Suite, Scope] = requireLib("suite", "scope")
+[Suite, Scope, {flag}] = requireLib("suite", "scope", "util")
 
 describe "Suite", ->
   lazy "suite", -> new Suite()
@@ -11,18 +11,46 @@ describe "Suite", ->
     it "has an empty list of tests", (suite) ->
       expect(suite.testCases).empty
 
-  it "adds the it block into current scope", (suite) ->
-    test = suite.test("x", b = ->)
+  describe "scopes", ->
+    it "creates with null title", (suite) ->
+      expect(suite.describe()).property("title", null)
+      expect(suite.describe(null)).property("title", null)
 
-    expect(suite.testCases).eql([test])
-    expect(test.title).eq "x"
-    expect(test.block).eq b
-    expect(test.scope).eq suite.scopes[0]
+    it "creates a simple score", (suite) ->
+      scope = suite.describe "pending"
+      expect(scope).ok
 
-  it "scope nesting", (suite) ->
-    scope = test = null
+    it "creates scopes and runs the block", (suite) ->
+      ran = false
+      suite.describe "something", -> ran = true
 
-    scope = suite.describe "", ->
-      test = suite.test "", ->
+      expect(ran).true
 
-    expect(test.scope).eq(scope)
+    it "scope nesting", (suite) ->
+      scope = test = null
+
+      scope = suite.describe "", ->
+        test = suite.test "", ->
+
+      expect(test.scope).eq(scope)
+
+    it "can mark flags", (suite) ->
+      scope = suite.describe "", x:1, ->
+      expect(flag(scope, "x")).eq(1)
+
+    it "flags without block", (suite) ->
+      scope = suite.describe "", x:1
+      expect(flag(scope, "x")).eq(1)
+
+  describe "creating tests", ->
+    it "creates pending test", (suite) ->
+      pending = suite.test "pending"
+      expect(flag(pending, "pending")).true
+
+    it "does simple tests creation", (suite) ->
+      test = suite.test("x", ->)
+      expect(test).ok
+
+    it "creates a test with flags", (suite) ->
+      test = suite.test "flagger", x:1, ->
+      expect(flag(test, "x")).eq(1)

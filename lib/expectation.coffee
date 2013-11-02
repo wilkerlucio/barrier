@@ -11,6 +11,7 @@ assertions = requireChai("lib/chai/core/assertions")
 AssertionError = requireChai("node_modules/assertion-error")
 
 chai = "AssertionError": AssertionError
+{flag} = require("./util.coffee")
 
 requireChai("lib/chai/assertion")(chai, utils)
 
@@ -47,23 +48,22 @@ module.exports = class Expectation extends Assertion
       this
 
   resolveFlags: ->
-    return Q(null) if @flag("hold")
+    return Q(null) if flag(this, "hold")
 
-    flags = _.keys(@__flags || {})
-    promises = _.map flags, (flag) =>
-      Q(@__flags[flag]).then (value) =>
-        @__flags[flag] = value
+    flags = _.keys(flag(this) || {})
+    promises = _.map flags, (key) =>
+      Q(flag(this, key)).then (value) => flag(this, key, value)
 
     Q.all(promises)
 
 Expectation.addMethod "reject", (args...) ->
-  fn = @flag("object")
+  fn = @_obj
   p = if _.isFunction(fn) then fn() else fn
 
   promise = p
     .then(-> ->)
     .catch((err) -> -> throw err)
-    .then (resolvedFn) => @flag("object", resolvedFn).throw(args...)
+    .then (resolvedFn) => flag(this, "object", resolvedFn).throw(args...)
 
   barrierContext.pushTask(promise)
 
