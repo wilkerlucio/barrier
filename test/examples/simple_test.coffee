@@ -1,4 +1,4 @@
-{dv} = require("./test_helper.coffee")
+{dv} = require("../support/dv.coffee")
 
 describe "Simple Test", ->
   it "is true", ->

@@ -30,7 +30,7 @@ module.exports = (grunt) ->
 
     watch:
       test:
-        files: ["test/**/*", "lib/**/*"]
+        files: ["Gruntfile.coffee", "test/**/*", "lib/**/*"]
         tasks: ["barriercli"]
 
   grunt.registerTask "default", ["barriercli", "watch"]

@@ -32,8 +32,8 @@ module.exports = class Expectation extends Assertion
 
   @addProperty: (name, getter) -> super(name, @promisify(getter, name))
 
-  @promisify: (fn, name = null) -> ->
-    task = @resolveFlags().then => Q.promised(fn)
+  @promisify: (fn, name = null) -> (args...) ->
+    task = @resolveFlags().then => Q.promised(fn).apply(this, args)
     barrierContext.pushTask(task, "expectation #{name}")
 
     this
@@ -47,6 +47,8 @@ module.exports = class Expectation extends Assertion
       this
 
   resolveFlags: ->
+    return Q(null) if @flag("hold")
+
     flags = _.keys(@__flags || {})
     promises = _.map flags, (flag) =>
       Q(@__flags[flag]).then (value) =>
@@ -56,13 +58,19 @@ module.exports = class Expectation extends Assertion
 
 Expectation.addMethod "reject", (args...) ->
   fn = @flag("object")
+  p = if _.isFunction(fn) then fn() else fn
 
-  promise = fn()
+  promise = p
     .then(-> ->)
     .catch((err) -> -> throw err)
     .then (resolvedFn) => @flag("object", resolvedFn).throw(args...)
 
   barrierContext.pushTask(promise)
+
+  this
+
+Assertion.addProperty.call Expectation, "hold", ->
+  @__flags.hold = true
 
   this
 
