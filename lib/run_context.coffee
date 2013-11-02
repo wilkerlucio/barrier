@@ -24,16 +24,17 @@ module.exports = class RunContext
 
     task
 
-  inject: (param) ->
+  inject: (param) =>
     if _.isFunction(param)
       @injectFunction(param)
     else
       @injectParams(param)
 
-  injectFunction: (fn) -> Q.promised(fn).apply(barrierContext, @injectPromises(extractArgs(fn)))
-  injectParams: (args) -> Q.all @injectPromises(args)
+  injectFunction: (fn) => Q.promised(fn).apply(barrierContext, @injectPromises(extractArgs(fn)))
 
-  injectPromises: (args) ->
+  injectParams: (args) => Q.all @injectPromises(args)
+
+  injectPromises: (args) =>
     {scope} = @case
 
     _.map args, (arg) ->

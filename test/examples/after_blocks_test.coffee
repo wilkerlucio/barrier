@@ -1,4 +1,4 @@
-{dv} = require("./test_helper.coffee")
+{dv} = require("../support/dv.coffee")
 
 describe "After Blocks", ->
   allAfter = null
@@ -9,16 +9,16 @@ describe "After Blocks", ->
     afterEach -> dv(null).then -> eachAfter = true
 
     it "don't change any on first", ->
-      expect(allAfter).eq(null)
-      expect(eachAfter).eq(null)
+      expect(allAfter).null
+      expect(eachAfter).null
 
     it "change the after each", ->
-      expect(allAfter).eq(null)
-      expect(eachAfter).eq(true)
+      expect(allAfter).null
+      expect(eachAfter).true
 
   it "change all", ->
-    expect(allAfter).eq(true)
-    expect(eachAfter).eq(true)
+    expect(allAfter).true
+    expect(eachAfter).true
 
   describe "run order", ->
     value = null

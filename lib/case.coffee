@@ -1,37 +1,27 @@
 _ = require("underscore")
 Q = require("q")
 
+util = require("./util.coffee")
+
 module.exports = class Case
   constructor: (@title, @block, @scope) ->
+    @scope.tests.push(this)
 
   run: ->
     context = barrierContext
 
-    chain = @runList(@scope.allBeforeBlocks())
-      .then => context.injectFunction(@block)
-
+    chain = @runList(@scope.allBeforeBlocks()).then => context.injectFunction(@block)
     context.pushTask(chain, "test main chain")
 
   runAfters: (next) ->
     @runList(@scope.allAfterEachBlocks()).then =>
-      @runList(@scope.afterBlocks) unless next and next.scope == @scope
+      @runList(@scope.afterBlocks.slice(0)) unless next and next.scope == @scope
 
-  runList: (remaining, defer = Q.defer()) ->
-    if remaining.length > 0
-      current = remaining.shift()
-
-      p = barrierContext.injectFunction(current)
-      p.then => @runList(remaining, defer)
-      p.fail (err) -> defer.reject(err)
-    else
-      defer.resolve(null)
-
-    defer.promise
-
-  flag: (name) ->
-    return @__flags[name] unless !@__flags or _.isUndefined(@__flags[name])
-
-    @scope.flag(name)
+  runList: (blocks) ->
+    util.qSequence(blocks, prepare: barrierContext.injectFunction)
 
   fullTitle: ->
     "#{@scope.fullTitle()} #{@title}"
+
+  # this method is here to make Barrier Case compatible with Mocha reporters
+  slow: -> this

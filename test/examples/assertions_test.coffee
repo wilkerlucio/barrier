@@ -1,11 +1,11 @@
 Q = require("q")
-{dv} = require("./test_helper.coffee")
+{dv} = require("../support/dv.coffee")
 
 describe "Assertions", ->
   describe "eq", ->
     it "comparing strings", -> expect("string").eq("string")
     it "comparing strings", -> expect("string").not.eq("other")
-    it "compares booleans", -> expect(true).eq(true)
+    it "compares booleans", -> expect(true).true
     it "compares lists",    -> expect(["a", "b", "c"]).eql(["a", "b", "c"])
     it "compares objects",  -> expect(a: 1).eql(a: 1)
 

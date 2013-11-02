@@ -14,10 +14,14 @@ class LazyBlock
 
 module.exports = class Scope
   constructor: (@title, @parent) ->
-    @beforeBlocks = []
+    @lazyBlocks      = {}
+    @beforeBlocks    = []
     @afterEachBlocks = []
-    @afterBlocks = []
-    @lazyBlocks = {}
+    @afterBlocks     = []
+    @children        = []
+    @tests           = []
+
+    @parent.children.push(this) if @parent
 
   allBeforeBlocks: ->
     if @parent
@@ -57,3 +61,11 @@ module.exports = class Scope
       @parent.fullTitle(titles)
     else
       _.compact(titles).join(" ")
+
+  toJSON: ->
+    title: @title
+    lazy: @lazyBlocks
+    before: @beforeBlocks
+    afterEach: @afterEachBlocks
+    after: @afterBlocks
+    children: @children

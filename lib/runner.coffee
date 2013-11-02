@@ -1,13 +1,12 @@
-Suite       = require("./suite.coffee")
-DotReporter = require("./reporters/dot.coffee")
+Q        = require("q")
+Suite    = require("./suite.coffee")
+Reporter = require("mocha").reporters.Dot
 
 module.exports = class Runner
-  constructor: (options = {}) ->
-    @reporter = new DotReporter()
+  constructor: (@reporter = Reporter, options = {}) ->
     @suite = new Suite()
+    @reporter = new @reporter(@suite)
 
   run: (files) ->
     @suite.withDSL => require file for file in files
-    p = @suite.run()
-    @reporter.attach(p)
-    p
+    @suite.run()

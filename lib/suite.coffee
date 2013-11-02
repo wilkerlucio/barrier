@@ -1,45 +1,29 @@
-_            = require("underscore")
-Q            = require("q")
-Scope        = require("./scope.coffee")
-Case         = require("./case.coffee")
-Exceptation  = require("./expectation.coffee")
-RunContext   = require("./run_context.coffee")
-TestReport   = require("./test_report.coffee")
+_                  = require("underscore")
+Q                  = require("q")
+Scope              = require("./scope.coffee")
+Case               = require("./case.coffee")
+Exceptation        = require("./expectation.coffee")
+RunContext         = require("./run_context.coffee")
+TestReport         = require("./test_report.coffee")
+{EventEmitter}     = require("events")
+{reversibleChange} = require("./util.coffee")
 
-tempChange = (object, attributes, callback) ->
-  oldValues = {}
-
-  for key, value of attributes
-    oldValues[key] = object[key]
-    object[key] = value
-
-  restore = ->
-    for key, value of oldValues
-      object[key] = value
-
-  if callback
-    callback()
-    restore()
-  else
-    restore
-
-module.exports = class Suite
+module.exports = class Suite extends EventEmitter
   constructor: (options = {})->
     @options = _.extend
       timeout: 2000
     , options
 
-    @scopes = [new Scope(null, null)]
-    @testCases = []
+    @rootScope  = new Scope(null, null)
+    @scopes     = [@rootScope]
+    @testCases  = []
     @runContext = null
-    @failed = false
+    @failed     = false
 
-    @describe.skip = (title, block) => @describe(title, block, skip: true)
-
-  lastScope: -> _.last @scopes
+  currentScope: -> _.last @scopes
 
   withDSL: (callback) ->
-    tempChange global,
+    reversibleChange global,
       describe:   @describe
       it:         @it
       before:     @before
@@ -47,26 +31,36 @@ module.exports = class Suite
       after:      @after
       afterEach:  @afterEach
       lazy:       @lazy
+      suite:      this
     , callback
 
-  run: (index = 0, defer = Q.defer()) ->
+  run: ->
+    @emit("start")
+    @runCase().then =>
+      @emit("end")
+
+  runCase: (index = 0, defer = Q.defer()) ->
     tcase = @testCases[index]
 
     if tcase
-      return @run(index + 1, defer) if tcase.flag("skip")
-
       @runContext = new RunContext(tcase)
       done = @runContext.done.timeout(@options.timeout)
 
-      g = tempChange(global, expect: @expect, barrierContext: @runContext)
+      g = reversibleChange(global, expect: @expect, barrierContext: @runContext)
 
-      done.then       => defer.notify(new TestReport(tcase))
-      done.fail (err) => @failed = true; defer.notify(new TestReport(tcase, err))
+      done.then =>
+        @emit("pass", tcase)
+      done.fail (err) =>
+        @failed = true
+        @emit("fail", tcase, err)
       done.finally    =>
         tcase.runAfters(@testCases[index + 1] || null).timeout(@options.timeout).finally =>
-          g(); @run(index + 1, defer)
+          g()
+          @emit("test end", tcase)
+          @runCase(index + 1, defer)
 
       try
+        @emit("test", tcase)
         tcase.run()
       catch err
         @runContext.defer.reject(err)
@@ -77,31 +71,26 @@ module.exports = class Suite
 
   # DSL
 
-  describe: (title, block, flags = {}) =>
-    unless _.isFunction(block)
-      flags.skip = true
-      block = ->
-
-    scope = new Scope(title, @lastScope(true))
-    scope.__flags = flags
+  describe: (title, block) =>
+    scope = new Scope(title, @currentScope())
 
     @scopes.push(scope)
     block()
     @scopes.pop()
 
-  it: (title, block, flags = {}) =>
-    flags.skip = true unless block
+  it: (title, block) =>
+    _.tap new Case(title, block, @currentScope(), this), (ccase) =>
+      @testCases.push(ccase)
 
-    scope = @lastScope()
-    ccase = new Case(title, block, scope, this)
-    ccase.__flags = flags
-    @testCases.push(ccase)
+  test: => @it.apply(this, arguments)
 
-  before:     (block) => @lastScope().beforeBlocks.push(_.once(block))
-  beforeEach: (block) => @lastScope().beforeBlocks.push(block)
-  after:      (block) => @lastScope().afterBlocks.push(_.once(block))
-  afterEach:  (block) => @lastScope().afterEachBlocks.push(block)
+  before:     (block) => @currentScope().beforeBlocks.push(_.once(block))
+  beforeEach: (block) => @currentScope().beforeBlocks.push(block)
+  after:      (block) => @currentScope().afterBlocks.push(_.once(block))
+  afterEach:  (block) => @currentScope().afterEachBlocks.push(block)
 
-  lazy: (args...) => @lastScope().addLazy(args...)
+  lazy: (args...) => @currentScope().addLazy(args...)
 
   expect: (args...) => new Exceptation(args...)
+
+  toJSON: -> rootScope: @rootScope.toJSON()
