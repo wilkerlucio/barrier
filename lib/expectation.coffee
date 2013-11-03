@@ -16,6 +16,7 @@ chai = "AssertionError": AssertionError
 requireChai("lib/chai/assertion")(chai, utils)
 
 Assertion = chai.Assertion
+Assertion.includeStack = true
 
 module.exports = class Expectation extends Assertion
   @addMethod:          (name, fn) -> super(name, @promisify(fn, name))
