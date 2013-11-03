@@ -4,7 +4,7 @@ Reporter = require("mocha").reporters.Dot
 
 module.exports = class Runner
   constructor: (@reporter = Reporter, options = {}) ->
-    @suite = new Suite()
+    @suite    = new Suite()
     @reporter = new @reporter(@suite)
 
   run: (files) ->

@@ -1,7 +1,8 @@
 reporters          = require("mocha").reporters
-
 Suite              = require("../lib/suite.coffee")
 {reversibleChange} = require("../lib/util.coffee")
+
+disableConsole = (callback) -> reversibleChange(console, log:(->), callback)
 
 describe "Mocha Reporters", ->
   for key, Reporter of reporters
@@ -14,5 +15,4 @@ describe "Mocha Reporters", ->
           it "passes", -> expect(true).true
           it "fails", -> throw new Error("fail")
 
-      restore = reversibleChange(console, log:->)
-      suite.run().then -> restore()
+      disableConsole -> suite.run()

@@ -35,7 +35,7 @@ module.exports = class RunContext
   injectParams: (args) => Q.all @injectPromises(args)
 
   injectPromises: (args) =>
-    {scope} = @case
+    scope = @case.parent
 
     _.map args, (arg) ->
       lazy = scope.lazyFactory(arg)

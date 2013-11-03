@@ -4,7 +4,6 @@ Scope                    = require("./scope.coffee")
 Case                     = require("./case.coffee")
 Exceptation              = require("./expectation.coffee")
 RunContext               = require("./run_context.coffee")
-TestReport               = require("./test_report.coffee")
 {EventEmitter}           = require("events")
 {reversibleChange, flag} = require("./util.coffee")
 

@@ -49,4 +49,12 @@ module.exports = util =
     return flags[key] if arguments.length == 2
     flags[key] = value; obj
 
+  parentLookup: (obj, key) ->
+    return unless obj and key
+
+    obj[key] || util.parentLookup(obj.parent, key)
+
+  ancestorChain: (obj) ->
+    if obj then [obj].concat(util.ancestorChain(obj.parent)) else []
+
 util.flag.key = "__flags"

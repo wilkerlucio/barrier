@@ -1,5 +1,6 @@
-_ = require("underscore")
-Q = require("q")
+_  = require("underscore")
+Q  = require("q")
+fk = require("./util.coffee").flag.key
 
 class LazyBlock
   constructor: (@block, @persist, @name) ->
@@ -14,6 +15,8 @@ class LazyBlock
 
 module.exports = class Scope
   constructor: (@title, @parent) ->
+    @[fk] = _.clone(@parent[fk]) if @parent
+
     @lazyBlocks      = {}
     @beforeBlocks    = []
     @afterEachBlocks = []

@@ -89,3 +89,46 @@ describe "Util", ->
 
     it "has a property with the flag key", ->
       expect(flag.key).eq("__flags")
+
+  describe "parentLookup", ->
+    {parentLookup} = util
+
+    it "returns undefined for invalid inputs", ->
+      expect(parentLookup(null, null)).undefined
+      expect(parentLookup({}, null)).undefined
+      expect(parentLookup(null, {})).undefined
+
+    it "retuns undefined if the key is not found", ->
+      expect(parentLookup({}, "x")).undefined
+
+    it "retuns the key on the initial element", ->
+      expect(parentLookup({x:1}, "x")).eq(1)
+
+    it "look for the parent", ->
+      expect(parentLookup({parent:{x:1}}, "x")).eq(1)
+
+    it "prioritize initial", ->
+      expect(parentLookup({parent:{x:1},x:2}, "x")).eq(2)
+      expect(parentLookup({parent:{y:1},x:2}, "y")).eq(1)
+      expect(parentLookup({parent:{parent:{z:3},y:1},x:2}, "z")).eq(3)
+
+  describe "ancestorChain", ->
+    {ancestorChain} = util
+
+    it "returns a blank array when object is null", ->
+      expect(ancestorChain()).eql []
+
+    it "returns an array with the item if the object has no parent", ->
+      expect(ancestorChain(x:1)).eql [{x:1}]
+
+    it "chained lookup", ->
+      root =
+        x:1
+        parent:
+          y:2
+          parent:
+            z:3
+
+      expect(ancestorChain(root)).deep.property("[0].x", 1)
+      expect(ancestorChain(root)).deep.property("[1].y", 2)
+      expect(ancestorChain(root)).deep.property("[2].z", 3)

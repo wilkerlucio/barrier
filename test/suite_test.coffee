@@ -1,3 +1,5 @@
+Q = require("q")
+
 [Suite, Scope, {flag}] = requireLib("suite", "scope", "util")
 
 describe "Suite", ->
@@ -32,7 +34,7 @@ describe "Suite", ->
       scope = suite.describe "", ->
         test = suite.test "", ->
 
-      expect(test.scope).eq(scope)
+      expect(test.parent).eq(scope)
 
     it "can mark flags", (suite) ->
       scope = suite.describe "", x:1, ->
@@ -54,3 +56,23 @@ describe "Suite", ->
     it "creates a test with flags", (suite) ->
       test = suite.test "flagger", x:1, ->
       expect(flag(test, "x")).eq(1)
+
+    it "inherit parent scopes flags", (suite) ->
+      test = null
+
+      suite.describe "nesting flags", x:1, ->
+        suite.describe "more levels", z:3, ->
+          test = suite.test "flag", y:2
+
+      expect(flag(test, "y")).eq(2)
+      expect(flag(test, "x")).eq(1)
+      expect(flag(test, "z")).eq(3)
+
+    it "resolves the flag promises", (suite) ->
+      test = null
+
+      suite.describe "promised flags on describe", x:Q(1), ->
+        test = it "resolves the flag value", z:Q(2) ->
+
+      expect(flag(test, "x")).eq(1)
+      expect(flag(test, "z")).eq(2)
