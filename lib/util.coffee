@@ -43,8 +43,10 @@ module.exports = util =
 
   flag: (obj, key, value) ->
     return null unless obj
-    flags = obj.__flags || (obj.__flags = {})
+    flags = obj[util.flag.key] || (obj[util.flag.key] = {})
 
     return flags if arguments.length == 1
     return flags[key] if arguments.length == 2
     flags[key] = value; obj
+
+util.flag.key = "__flags"

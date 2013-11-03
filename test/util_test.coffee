@@ -67,7 +67,7 @@ describe "Util", ->
       assertSequenceResult fid, "x", prepare: (fn) -> Q "x"
 
   describe "flag", ->
-    flag = util.flag
+    {flag} = util
 
     # flag returns the obj when called with 3 arguments
     lazy "flagged", -> flag({}, "x", 1)
@@ -86,3 +86,6 @@ describe "Util", ->
 
     it "returns the flag hash when sending the object only", (flagged) ->
       expect(flag(flagged)).eql(x:1)
+
+    it "has a property with the flag key", ->
+      expect(flag.key).eq("__flags")
