@@ -68,11 +68,15 @@ describe "Suite", ->
       expect(flag(test, "x")).eq(1)
       expect(flag(test, "z")).eq(3)
 
-    it "resolves the flag promises", (suite) ->
-      test = null
 
-      suite.describe "promised flags on describe", x:Q(1), ->
-        test = it "resolves the flag value", z:Q(2) ->
+  describe "beforeEach blocks", ->
+    it "creates the block into", ->
 
-      expect(flag(test, "x")).eq(1)
-      expect(flag(test, "z")).eq(2)
+    # it "resolves the flag promises", skip: true, (suite) ->
+    #   test = null
+
+    #   suite.describe "promised flags on describe", x:Q(1), ->
+    #     test = it "resolves the flag value", z:Q(2) ->
+
+    #   expect(flag(test, "x")).eq(1)
+    #   expect(flag(test, "z")).eq(2)

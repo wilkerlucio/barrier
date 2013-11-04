@@ -22,7 +22,9 @@
     "colors": "~0.6.2",
     "commander": "~2.0.0",
     "chai": "~1.8.1",
-    "mocha": "~1.13.0"
+    "mocha": "~1.13.0",
+    "better-stack-traces": "~1.0.0",
+    "sinon": "~1.7.3"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

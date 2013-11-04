@@ -1,5 +1,5 @@
-_ = require("underscore")
-Q = require("q")
+_    = require("underscore")
+Q    = require("q")
 util = require("../lib/util.coffee")
 
 describe "Util", ->
@@ -112,11 +112,11 @@ describe "Util", ->
             z:
               a:4
 
-      testContextLookup "empty", {}, "x", {}
-      testContextLookup "simple", {x:{a:1}}, "x", a:1
+      testContextLookup "empty",             {},         "x", {}
+      testContextLookup "simple",            {x:{a:1}},  "x", a:1
       testContextLookup "complex immediate", deepObject, "x", a:1
-      testContextLookup "complex parent", deepObject, "y", a:2
-      testContextLookup "complex deep", deepObject, "z", a:4
+      testContextLookup "complex parent",    deepObject, "y", a:2
+      testContextLookup "complex deep",      deepObject, "z", a:4
 
   describe "ancestorChain", ->
     {ancestorChain} = util

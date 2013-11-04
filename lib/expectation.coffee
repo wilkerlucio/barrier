@@ -1,3 +1,5 @@
+require("better-stack-traces").install()
+
 _ = require("underscore")
 Q = require("q")
 Path = require("path")

@@ -93,9 +93,10 @@ module.exports = class Suite extends EventEmitter
 
   test: => @it.apply(this, arguments)
 
-  before:     (block) => @currentScope().beforeBlocks.push(_.once(block))
+  # before:   (block) => @currentScope().hook("before", block)
+  before:     (block) => @currentScope().beforeBlocks.push(_.once block)
   beforeEach: (block) => @currentScope().beforeBlocks.push(block)
-  after:      (block) => @currentScope().afterBlocks.push(_.once(block))
+  after:      (block) => @currentScope().afterBlocks.push(_.once block)
   afterEach:  (block) => @currentScope().afterEachBlocks.push(block)
 
   lazy: (args...) => @currentScope().addLazy(args...)

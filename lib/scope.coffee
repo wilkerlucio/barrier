@@ -1,6 +1,7 @@
-_  = require("underscore")
-Q  = require("q")
-fk = require("./util.coffee").flag.key
+_    = require("underscore")
+Q    = require("q")
+util = require("./util.coffee")
+fk   = util.flag.key
 
 class LazyBlock
   constructor: (@block, @persist, @name) ->
@@ -26,6 +27,11 @@ module.exports = class Scope
 
     @parent.children.push(this) if @parent
 
+  hook: (context, block) ->
+    ctx = @[context] || (@[context] = [])
+    return ctx unless block?
+    ctx.push(block); this
+
   allBeforeBlocks: ->
     if @parent
       @parent.allBeforeBlocks().concat(@beforeBlocks)
@@ -44,19 +50,12 @@ module.exports = class Scope
     @lazyBlocks[name] = new LazyBlock(block, persist, name)
 
   lazyFactory: (name) ->
-    block = @lazyBlocks[name]
-    block ||= @parent.lazyFactory(name) if @parent
+    block = util.parentLookup(this, "lazyBlocks", name)
 
     if _.isUndefined(block)
       throw new Error("Lazy dependency #{name} wasn't defined")
 
     block
-
-  flag: (name) ->
-    return @__flags[name] unless !@__flags or _.isUndefined(@__flags[name])
-    return @parent.flag(name) if @parent
-
-    undefined
 
   fullTitle: (titles = []) ->
     if @parent
@@ -66,9 +65,9 @@ module.exports = class Scope
       _.compact(titles).join(" ")
 
   toJSON: ->
-    title: @title
-    lazy: @lazyBlocks
-    before: @beforeBlocks
+    title:     @title
+    lazy:      @lazyBlocks
+    before:    @beforeBlocks
     afterEach: @afterEachBlocks
-    after: @afterBlocks
-    children: @children
+    after:     @afterBlocks
+    children:  @children
