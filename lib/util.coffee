@@ -49,10 +49,15 @@ module.exports = util =
     return flags[key] if arguments.length == 2
     flags[key] = value; obj
 
-  parentLookup: (obj, key) ->
-    return unless obj and key
+  parentLookup: (obj, context, key) ->
+    return unless obj and context
+    ctx = obj[context] || (obj[context] = {})
 
-    obj[key] || util.parentLookup(obj.parent, key)
+    if key?
+      ctx[key] || util.parentLookup(obj.parent, context, key)
+    else
+      return _.extend(util.parentLookup(obj.parent, context), ctx) if obj.parent
+      _.clone(ctx)
 
   ancestorChain: (obj) ->
     if obj then [obj].concat(util.ancestorChain(obj.parent)) else []

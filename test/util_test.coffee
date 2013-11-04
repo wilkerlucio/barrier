@@ -91,26 +91,32 @@ describe "Util", ->
       expect(flag.key).eq("__flags")
 
   describe "parentLookup", ->
-    {parentLookup} = util
+    testContextLookup = (title, args..., expected) ->
+      it title, -> expect(util.parentLookup(args...)).eql expected
 
     it "returns undefined for invalid inputs", ->
-      expect(parentLookup(null, null)).undefined
-      expect(parentLookup({}, null)).undefined
-      expect(parentLookup(null, {})).undefined
+      expect(util.parentLookup(null, null)).undefined
+      expect(util.parentLookup({}, null)).undefined
+      expect(util.parentLookup(null, {})).undefined
 
-    it "retuns undefined if the key is not found", ->
-      expect(parentLookup({}, "x")).undefined
+    describe "context query", ->
+      deepObject =
+        x:
+          a:1
+        parent:
+          y:
+            a:2
+          parent:
+            x:
+              a:3
+            z:
+              a:4
 
-    it "retuns the key on the initial element", ->
-      expect(parentLookup({x:1}, "x")).eq(1)
-
-    it "look for the parent", ->
-      expect(parentLookup({parent:{x:1}}, "x")).eq(1)
-
-    it "prioritize initial", ->
-      expect(parentLookup({parent:{x:1},x:2}, "x")).eq(2)
-      expect(parentLookup({parent:{y:1},x:2}, "y")).eq(1)
-      expect(parentLookup({parent:{parent:{z:3},y:1},x:2}, "z")).eq(3)
+      testContextLookup "empty", {}, "x", {}
+      testContextLookup "simple", {x:{a:1}}, "x", a:1
+      testContextLookup "complex immediate", deepObject, "x", a:1
+      testContextLookup "complex parent", deepObject, "y", a:2
+      testContextLookup "complex deep", deepObject, "z", a:4
 
   describe "ancestorChain", ->
     {ancestorChain} = util
