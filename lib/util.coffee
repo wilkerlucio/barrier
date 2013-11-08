@@ -23,23 +23,12 @@ module.exports = util =
     else
       restore
 
-  qSequence: (sequence, options = {}) ->
-    sequence ?= []
+  qSequence: (sequence, acc = null) ->
+    sequence ||= []
+    return Q(acc) unless sequence.length
 
-    {interceptor, prepare, arg} = options = _.extend
-      prepare: _.identity
-      interceptor: _.identity
-      arg: null
-    , options
-
-
-    Q(interceptor(arg)).then (res) ->
-      return res if sequence.length == 0
-
-      fn = prepare sequence.shift()
-
-      next = if _.isFunction(fn) then Q.promised(fn)(res) else fn
-      next.then (prep) -> util.qSequence(sequence, _.extend(options, arg: prep))
+    promise = Q.promised(sequence.shift())(acc)
+    promise.then (res) -> util.qSequence(sequence, res)
 
   flag: (obj, key, value) ->
     return null unless obj

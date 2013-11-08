@@ -16,18 +16,15 @@ describe "Scope", ->
       expect(root.children).eql [scope]
 
   describe "hooks", ->
-    testHook = (args..., expected) -> barrierContext.inject (root) ->
-      matcher = if _.isArray(expected) then "eql" else "eq"
-      expect(root.hook(args...))[matcher] expected
-
     it "empty calls", (root) ->
-      testHook []
-      testHook null, []
-      testHook "",   []
+      expect(root.hook()).eql([])
+      expect(root.hook(null)).eql([])
+      expect(root.hook("")).eql([])
 
     it "saves and reads hooks", (root) ->
-      testHook "before", (f = ->), root
-      testHook "before", [f]
+      fn = ->
+      expect(root.hook("before", fn)).eq(fn)
+      expect(root.hook("before")).eql [fn]
 
   describe "#addLazy", ->
     testInvalidArgs = (args...) ->

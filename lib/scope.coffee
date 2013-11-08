@@ -30,7 +30,7 @@ module.exports = class Scope
   hook: (context, block) ->
     ctx = @[context] || (@[context] = [])
     return ctx unless block?
-    ctx.push(block); this
+    ctx.push(block); block
 
   allBeforeBlocks: ->
     if @parent

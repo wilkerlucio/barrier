@@ -5,7 +5,8 @@ Case                     = require("./case.coffee")
 Exceptation              = require("./expectation.coffee")
 RunContext               = require("./run_context.coffee")
 {EventEmitter}           = require("events")
-{reversibleChange, flag} = require("./util.coffee")
+util                     = require("./util.coffee")
+{reversibleChange, flag} = util
 
 module.exports = class Suite extends EventEmitter
   constructor: (options = {})->
@@ -42,6 +43,8 @@ module.exports = class Suite extends EventEmitter
     tcase = @testCases[index]
 
     if tcase
+      return @runCase(index + 1, defer) if util.parentLookup(tcase, "__flags", "skip")
+
       @runContext = new RunContext(tcase)
       g = reversibleChange(global, expect: @expect, barrierContext: @runContext)
 
@@ -91,6 +94,7 @@ module.exports = class Suite extends EventEmitter
       flag(ccase, "pending", true) unless _.isFunction block
       @testCases.push(ccase)
 
+  context: => @describe.apply(this, arguments)
   test: => @it.apply(this, arguments)
 
   # before:   (block) => @currentScope().hook("before", block)
@@ -98,6 +102,8 @@ module.exports = class Suite extends EventEmitter
   beforeEach: (block) => @currentScope().beforeBlocks.push(block)
   after:      (block) => @currentScope().afterBlocks.push(_.once block)
   afterEach:  (block) => @currentScope().afterEachBlocks.push(block)
+
+  hook:  (context, block) => @currentScope().hook(context, block)
 
   lazy: (args...) => @currentScope().addLazy(args...)
 

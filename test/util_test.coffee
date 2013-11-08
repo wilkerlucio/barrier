@@ -33,38 +33,51 @@ describe "Util", ->
 
   describe "qSequence", ->
     qs = util.qSequence
-    assertSequenceResult = (chain..., result) ->
-      options = {}
-
-      if chain.length > 1 and (result.interceptor? or result.prepare? or result.arg?)
-        [options, result] = [result, chain.pop()]
-
-      expect(qs(chain, options)).eq(result)
-
-    lazy "fx",  -> -> "x"
-    lazy "fy",  -> -> "y"
-    lazy "fup", -> (x) -> x.toUpperCase()
-    lazy "fid", -> _.identity
 
     it "returns a promise", ->
       expect(qs()).hold.respondTo("then")
       expect(qs([])).hold.respondTo("then")
       expect(qs(null)).hold.respondTo("then")
 
-    it "runs once function", -> assertSequenceResult Q("x"), "x"
+    it "returns null if there is nothing to run", ->
+      expect(qs()).eq(null)
+      expect(qs([])).eq(null)
+      expect(qs(null)).eq(null)
 
-    it "returns value from last item", (fx, fy) -> assertSequenceResult fx, fy, "y"
+    it "runs once function", ->
+      expect(qs [-> "x"]).eq "x"
 
-    it "chain the results", (fx, fup) -> assertSequenceResult fx, fup, "X"
+    it "runs once function with promises", ->
+      expect(qs [-> Q("x")]).eq "x"
 
-    it "can intercept the chain", (fx, fup) ->
-      assertSequenceResult fx, fup, "XZz", interceptor: (value) -> value + "z"
+    it "runs once function and sends the argument", ->
+      expect(qs [(x) -> Q(x.toUpperCase())], "x").eq "X"
 
-    it "can prepare the promises", (fid) ->
-      assertSequenceResult fid, "x", prepare: (fn) -> -> fn("x")
+    it "rejects when the promise rejects", ->
+      expect(qs [-> Q.reject("some error")]).hold.reject "some error"
 
-    it "handles returning promises on prepare", (fid) ->
-      assertSequenceResult fid, "x", prepare: (fn) -> Q "x"
+    it "rejects when the function throws an error", ->
+      expect(qs [-> throw "some error"]).hold.reject "some error"
+
+    it "call in chain with multiple", ->
+      expect(qs [(-> "x"), ((x) -> x + "y")]).eq "xy"
+
+    it "chain with mixed promises and values", ->
+      expect(qs [(-> "x"), ((x) -> Q(x + "y"))]).eq "xy"
+
+    it "handles reject into middle term having multiple terms", ->
+      fxCalled = false
+      fyCalled = false
+
+      fx = -> fxCalled = true; "x"
+      fy = -> fyCalled = true;"y"
+
+      qs([fx, (-> Q.reject("error")), fy])
+        .fail (err) ->
+          expect(-> throw err).throw "error"
+        .finally ->
+          expect(fxCalled, "functions before error must be called").true
+          expect(fyCalled, "functions after error must not be called").false
 
   describe "flag", ->
     {flag} = util

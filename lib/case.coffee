@@ -5,6 +5,8 @@ fk   = util.flag.key
 
 module.exports = class Case
   constructor: (@title, @block, @parent) ->
+    throw "Test Case requires a parent" unless @parent
+
     @[fk] = _.clone(@parent[fk])
     @parent.tests.push(this)
 
@@ -19,10 +21,13 @@ module.exports = class Case
       @runList(@parent.afterBlocks.slice(0)) unless next and next.parent == @parent
 
   runList: (blocks) ->
-    util.qSequence(blocks, prepare: barrierContext.injectFunction)
+    blocks = _.map blocks, (block) -> -> barrierContext.injectFunction(block)
+    util.qSequence(blocks)
 
   fullTitle: ->
     "#{@parent.fullTitle()} #{@title}"
+
+  isPending: -> !@block
 
   # this method is here to make Barrier Case compatible with Mocha reporters
   slow: -> this

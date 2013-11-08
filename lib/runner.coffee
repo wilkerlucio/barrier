@@ -1,6 +1,9 @@
-Q        = require("q")
-Suite    = require("./suite.coffee")
-Reporter = require("mocha").reporters.Dot
+_              = require("underscore")
+Q              = require("q")
+Suite          = require("./suite.coffee")
+Reporter       = require("mocha").reporters.Dot
+{EventEmitter} = require("events")
+util           = require("./util.coffee")
 
 module.exports = class Runner
   constructor: (@reporter = Reporter, options = {}) ->
@@ -10,3 +13,43 @@ module.exports = class Runner
   run: (files) ->
     @suite.withDSL => require file for file in files
     @suite.run()
+
+class module.exports.NewRunner extends EventEmitter
+  constructor: (@suite, @reporter = Reporter) ->
+    throw "invalid suite" unless @suite? and @suite instanceof Suite
+
+    @reporter = new @reporter(this)
+
+  run: ->
+    @emit("start")
+    @runScope(@suite.rootScope).finally =>
+      @emit("end")
+
+  runScope: (scope) ->
+    @emit("suite", scope) if scope.parent
+
+    @sequence(scope.hook("before"), ((h) => => @runHook("before", h)))
+      .then(=> @sequence(scope.tests, ((test) => => @runTest(test))))
+      .then(=> @sequence(scope.children, ((s) => => @runScope(s))))
+      .then(=> @sequence(scope.hook("after"), ((h) => => @runHook("after", h))))
+      .then(=> @emit("suite end", scope) if scope.parent)
+
+  runTest: (test) ->
+    @emit("test", test)
+
+    if test.isPending()
+      @emit("pending", test)
+      @emit("test end", test)
+    else
+      Q.promised(test.block)()
+        .then(=> @emit("pass", test))
+        .fail((err) => @emit("fail", test, err))
+        .finally(=> @emit("test end", test))
+
+  runHook: (name, block) ->
+    @emit("hook", block, name)
+
+    Q.promised(block)()
+      .then => @emit("hook end", block, name)
+
+  sequence: (list, prepare) -> util.qSequence(_.map(list, prepare))
