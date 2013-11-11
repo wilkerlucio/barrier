@@ -29,10 +29,14 @@ class SpyReporter
   calledSpy: -> _.tap sinon.spy(), (spy) -> spy()
 
 describe "Runner", ->
-  lazy "runner", (suite, reporterClass) -> new Runner(suite, reporterClass)
+  lazy "runner", (suite, reporterClass) ->
+    runner = new Runner(suite)
+    runner.reporter(reporterClass)
+    runner
+
   lazy "suite", -> new Suite()
-  lazy "reporter", (runner) -> runner.reporter
-  lazy "reporterClass", -> undefined
+  lazy "reporter", (runner) -> runner._reporter
+  lazy "reporterClass", -> null
 
   describe "initialize", ->
     it "raises error if the suite is not given", ->
@@ -41,8 +45,18 @@ describe "Runner", ->
       expect(-> new Runner({})).throw "invalid suite"
 
     it "inits with default runner and creates the suite", (runner) ->
-      expect(runner.reporter).instanceOf(reporters.Dot)
       expect(runner.suite).instanceOf(Suite)
+
+  describe "reporter", ->
+    it "works by sending the mocha reporter name", (suite) ->
+      runner = new Runner(suite)
+      runner.reporter("spec")
+
+      expect(runner.reporter()).instanceOf(require("mocha").reporters.Spec)
+
+    it "raises error when using invalid option", (suite) ->
+      runner = new Runner(suite)
+      expect(-> runner.reporter("invalid")).throw "Cannot find reporter 'invalid'"
 
   describe "#run", ->
     lazy "reporterClass", -> SpyReporter
@@ -53,9 +67,10 @@ describe "Runner", ->
 
     it "running with no tests", ->
       suite = new Suite()
-      runner = new Runner(suite, SpyReporter)
+      runner = new Runner(suite)
+      runner.reporter(SpyReporter)
 
-      runner.run().then -> runner.reporter.check([
+      runner.run().then -> runner.reporter().check([
         [ "start" ]
         [ "end" ]
       ])
@@ -65,9 +80,10 @@ describe "Runner", ->
         suite = new Suite()
         ctx.context = suite.context "", ->
           ctx.test = suite.test "", testFn
-        runner = new Runner(suite, SpyReporter, timeout: 20)
+        runner = new Runner(suite, timeout: 20)
+        runner.reporter(SpyReporter)
 
-        runner.run().then -> runner.reporter.check([
+        runner.run().then -> runner.reporter().check([
           [ "start" ]
           [ "suite",     ctx.context ]
           [ "test",      ctx.test ]
@@ -90,9 +106,10 @@ describe "Runner", ->
         ctx.context = suite.context "", ->
           ctx.test = suite.test "", testFn
           ctx.test2 = suite.test "", ->
-        runner = new Runner(suite, SpyReporter)
+        runner = new Runner(suite)
+        runner.reporter(SpyReporter)
 
-        runner.run().then -> runner.reporter.check([
+        runner.run().then -> runner.reporter().check([
           [ "start" ]
           [ "suite",     ctx.context ]
           [ "test",      ctx.test ]
@@ -118,9 +135,10 @@ describe "Runner", ->
         ctx.context2 = suite.context "", ->
           ctx.test = suite.test "", ->
 
-      runner = new Runner(suite, SpyReporter)
+      runner = new Runner(suite)
+      runner.reporter(SpyReporter)
 
-      runner.run().then -> runner.reporter.check([
+      runner.run().then -> runner.reporter().check([
         [ "start" ]
         [ "suite",     ctx.context ]
           [ "test",      ctx.test2 ]
@@ -144,10 +162,11 @@ describe "Runner", ->
           ctx.test1 = suite.test "", ->
           ctx.test2 = suite.test "", ->
 
-        runner = new Runner(suite, SpyReporter)
+        runner = new Runner(suite)
+        runner.reporter(SpyReporter)
 
         runner.run().then ->
-          runner.reporter.check([
+          runner.reporter().check([
             [ "start" ]
             [ "suite", ctx.context ]
               [ "hook",      ctx.before, "before" ]
@@ -170,10 +189,11 @@ describe "Runner", ->
           ctx.before = suite.hook "before", -> throw "err"
           ctx.test1 = suite.test "", ->
 
-        runner = new Runner(suite, SpyReporter)
+        runner = new Runner(suite)
+        runner.reporter(SpyReporter)
 
         runner.run().fail ->
-          runner.reporter.check([
+          runner.reporter().check([
             [ "start" ]
             [ "suite", ctx.context ]
             [ "hook",  ctx.before, "before" ]
@@ -188,10 +208,11 @@ describe "Runner", ->
           ctx.test1 = suite.test "", ->
           ctx.test2 = suite.test "", ->
 
-        runner = new Runner(suite, SpyReporter)
+        runner = new Runner(suite)
+        runner.reporter(SpyReporter)
 
         runner.run().then ->
-          runner.reporter.check([
+          runner.reporter().check([
             [ "start" ]
             [ "suite", ctx.context ]
               [ "test",      ctx.test1 ]
@@ -215,10 +236,11 @@ describe "Runner", ->
 
           ctx.test2 = suite.test "", ->
 
-        runner = new Runner(suite, SpyReporter)
+        runner = new Runner(suite)
+        runner.reporter(SpyReporter)
 
         runner.run().fail ->
-          runner.reporter.check([
+          runner.reporter().check([
             [ "start" ]
             [ "suite", ctx.context ]
               [ "test",     ctx.test2 ]

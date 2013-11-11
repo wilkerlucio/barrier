@@ -10,22 +10,33 @@ program
   .version(pkg.version)
   .usage("[options] <file ...>")
   .option("-v, --verbose")
-  .parse(process.argv);
+  .option("-R, --reporter <name>", "specify the reporter to use")
+  .option('--reporters', 'display available reporters');
 
-// var Runner = require("../lib/runner");
-// var Path = require("path");
-// var _ = require("underscore");
-//
-// var files = _.map(program.args, function(path) { return Path.resolve(path); });
-//
-// var runner = new Runner();
-//
-// runner.run(files)
-//   .then(function(passed) {
-//     process.exit(passed ? 0 : 1);
-//   });
+program.on('reporters', function(){
+  console.log();
+  console.log('    dot - dot matrix');
+  console.log('    doc - html documentation');
+  console.log('    spec - hierarchical spec list');
+  console.log('    json - single json object');
+  console.log('    progress - progress bar');
+  console.log('    list - spec-style listing');
+  console.log('    tap - test-anything-protocol');
+  console.log('    landing - unicode landing strip');
+  console.log('    xunit - xunit reporter');
+  console.log('    html-cov - HTML test coverage');
+  console.log('    json-cov - JSON test coverage');
+  console.log('    min - minimal reporter (great with --watch)');
+  console.log('    json-stream - newline delimited json events');
+  console.log('    markdown - markdown documentation (github flavour)');
+  console.log('    nyan - nyan cat!');
+  console.log();
+  process.exit();
+});
 
-var Reporter = require("mocha").reporters.Spec;
+program.parse(process.argv);
+
+var Reporter = require("mocha").reporters.Dot;
 var Suite = require("../lib/suite.coffee");
 var Runner = require("../lib/runner");
 var Path = require("path");
@@ -42,7 +53,8 @@ suite.withDSL(function() {
   }
 });
 
-var runner = new Runner(suite, Reporter);
+var runner = new Runner(suite);
+runner.reporter(program.reporter || "dot");
 runner.run().then(function(passed) {
   process.exit(passed ? 0 : 1);
 });

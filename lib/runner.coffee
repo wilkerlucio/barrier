@@ -5,16 +5,32 @@ UnitRunner     = require("./unit_runner.coffee")
 Reporter       = require("mocha").reporters.Dot
 {EventEmitter} = require("events")
 util           = require("./util.coffee")
+path           = require("path")
 
 module.exports = class Runner extends EventEmitter
-  constructor: (@suite, @reporter = Reporter, options = {}) ->
+  constructor: (@suite, options = {}) ->
     throw "invalid suite" unless @suite? and @suite instanceof Suite
 
     @options = _.extend
       timeout: 2000
     , options
 
-    @reporter = new @reporter(this)
+  reporter: (reporter) ->
+    if reporter?
+      if _.isFunction(reporter)
+        @_reporter = new reporter(this)
+      else
+        reporterClass = null
+        reporter ||= "dot"
+
+        try
+          reporterPath = path.join(path.dirname(require.resolve("mocha")), "lib", "reporters", reporter)
+          reporterClass = require(reporterPath)
+          @_reporter = new reporterClass(this)
+        catch e
+          throw "Cannot find reporter '#{reporter}'"
+    else
+      @_reporter
 
   run: ->
     @emit("start")

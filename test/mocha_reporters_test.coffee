@@ -9,7 +9,8 @@ describe "Mocha Reporters", ->
   for key, Reporter of reporters
     it "runs the reporter #{key} without any errors", ->
       suite = new Suite()
-      runner = new Runner(suite, Reporter)
+      runner = new Runner(suite)
+      runner.reporter(Reporter)
 
       suite.withDSL ->
         describe "running a block", ->
