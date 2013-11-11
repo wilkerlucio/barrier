@@ -20,7 +20,7 @@ describe "Before Blocks", ->
     beforeEach -> n += 2
 
     it "runs external and internal", ->
-      expect(n).eq(5)
+      expect(n).eq(6)
 
   it "runs before each on each test", ->
-    expect(n).eq(6)
+    expect(n).eq(3)

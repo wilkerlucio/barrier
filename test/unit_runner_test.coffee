@@ -176,6 +176,32 @@ describe "Test Runner", ->
         unit2.run().then ->
           expect(callCount, "lazy must had cached").eql(1)
 
+    it "works on beforeEach blocks", ->
+      seq = []
+
+      scope = new Scope("")
+      scope.addLazy "x", -> "y"
+      scope.hook "beforeEach", (x) -> seq.push(x)
+
+      test = new Case("", (->), scope)
+      unit = new UnitRunner(test)
+
+      unit.run().then (e) ->
+        expect(seq, "lazy must had loaded").eql(["y"])
+
+    it "works on afterEach blocks", ->
+      seq = []
+
+      scope = new Scope("")
+      scope.addLazy "x", -> "y"
+      scope.hook "afterEach", (x) -> seq.push(x)
+
+      test = new Case("", (->), scope)
+      unit = new UnitRunner(test)
+
+      unit.run().then (e) ->
+        expect(seq, "lazy must had loaded").eql(["y"])
+
   describe "parallel wait", ->
     delayedCall = (wait, fn) ->
       defer = Q.defer()

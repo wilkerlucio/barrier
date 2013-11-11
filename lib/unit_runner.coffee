@@ -18,11 +18,11 @@ module.exports = class UnitRunner
       util.qSequence @afterEachBlocks().concat(dslRevert)
 
   beforeEachBlocks: ->
-    _.flatten(_.invoke util.ancestorChain(@test.parent).reverse(), "hook", "beforeEach")
+    _.map(_.flatten(_.invoke util.ancestorChain(@test.parent).reverse(), "hook", "beforeEach"), @injectedBlock)
 
   afterEachBlocks: ->
-    _.map _.flatten(_.invoke util.ancestorChain(@test.parent), "hook", "afterEach"), (block) ->
-      -> Q.promised(block)().fail -> null
+    _.map _.flatten(_.invoke util.ancestorChain(@test.parent), "hook", "afterEach"), (block) =>
+      => @injectedBlock(block)().fail -> null
 
   injectedBlock: (block) => =>
     lazys = util.functionArgNames(block)
@@ -55,6 +55,16 @@ module.exports = class UnitRunner
   taskDone: =>
     if @defer.promise.isPending() and @allTasksDone()
       @defer.resolve(Q.all(@tasks))
+
+  async: ->
+    defer = Q.defer()
+    @waitFor(defer.promise, "async call")
+
+    (err) ->
+      if err == undefined
+        defer.resolve(null)
+      else
+        defer.reject(err)
 
   # DSL Methods
 

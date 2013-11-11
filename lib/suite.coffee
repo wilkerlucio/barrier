@@ -34,41 +34,6 @@ module.exports = class Suite extends EventEmitter
       suite:      this
     , callback
 
-  run: ->
-    @emit("start")
-    @runCase().then =>
-      @emit("end")
-
-  runCase: (index = 0, defer = Q.defer()) ->
-    tcase = @testCases[index]
-
-    if tcase
-      return @runCase(index + 1, defer) if util.parentLookup(tcase, "__flags", "skip")
-
-      @runContext = new RunContext(tcase)
-      g = reversibleChange(global, expect: @expect, barrierContext: @runContext)
-
-      @runContext.done.timeout(@options.timeout)
-        .then(=> @emit("pass", tcase))
-        .fail (err) =>
-          @failed = true
-          @emit("fail", tcase, err)
-        .finally =>
-          tcase.runAfters(@testCases[index + 1] || null).timeout(@options.timeout).finally =>
-            g()
-            @emit("test end", tcase)
-            @runCase(index + 1, defer)
-
-      try
-        @emit("test", tcase)
-        tcase.run()
-      catch err
-        @runContext.defer.reject(err)
-    else
-      defer.resolve(!@failed)
-
-    defer.promise
-
   # DSL
 
   describe: (title = null, flags, block) =>
@@ -97,11 +62,10 @@ module.exports = class Suite extends EventEmitter
   context: => @describe.apply(this, arguments)
   test: => @it.apply(this, arguments)
 
-  # before:   (block) => @currentScope().hook("before", block)
-  before:     (block) => @currentScope().beforeBlocks.push(_.once block)
-  beforeEach: (block) => @currentScope().beforeBlocks.push(block)
-  after:      (block) => @currentScope().afterBlocks.push(_.once block)
-  afterEach:  (block) => @currentScope().afterEachBlocks.push(block)
+  before:     (block) => @currentScope().hook "before", block
+  beforeEach: (block) => @currentScope().hook "beforeEach", block
+  after:      (block) => @currentScope().hook "after", block
+  afterEach:  (block) => @currentScope().hook "afterEach", block
 
   hook:  (context, block) => @currentScope().hook(context, block)
 

@@ -12,37 +12,37 @@ program
   .option("-v, --verbose")
   .parse(process.argv);
 
-var Runner = require("../lib/runner");
-var Path = require("path");
-var _ = require("underscore");
-
-var files = _.map(program.args, function(path) { return Path.resolve(path); });
-
-var runner = new Runner();
-
-runner.run(files)
-  .then(function(passed) {
-    process.exit(passed ? 0 : 1);
-  });
-
-// var Reporter = require("mocha").reporters.Dot;
-// var Suite = require("../lib/suite.coffee");
-// var Runner = require("../lib/runner").NewRunner;
+// var Runner = require("../lib/runner");
 // var Path = require("path");
 // var _ = require("underscore");
 //
 // var files = _.map(program.args, function(path) { return Path.resolve(path); });
 //
-// var suite = new Suite();
+// var runner = new Runner();
 //
-// suite.withDSL(function() {
-//   var i;
-//   for (i = 0; i < files.length; i++) {
-//     require(files[i]);
-//   }
-// });
-//
-// var runner = new Runner(suite, Reporter);
-// runner.run().then(function(passed) {
-//   process.exit(passed ? 0 : 1);
-// });
+// runner.run(files)
+//   .then(function(passed) {
+//     process.exit(passed ? 0 : 1);
+//   });
+
+var Reporter = require("mocha").reporters.Dot;
+var Suite = require("../lib/suite.coffee");
+var Runner = require("../lib/runner").NewRunner;
+var Path = require("path");
+var _ = require("underscore");
+
+var files = _.map(program.args, function(path) { return Path.resolve(path); });
+
+var suite = new Suite();
+
+suite.withDSL(function() {
+  var i;
+  for (i = 0; i < files.length; i++) {
+    require(files[i]);
+  }
+});
+
+var runner = new Runner(suite, Reporter);
+runner.run().then(function(passed) {
+  process.exit(passed ? 0 : 1);
+});
