@@ -6,16 +6,7 @@ Reporter       = require("mocha").reporters.Dot
 {EventEmitter} = require("events")
 util           = require("./util.coffee")
 
-module.exports = class Runner
-  constructor: (@reporter = Reporter, options = {}) ->
-    @suite    = new Suite()
-    @reporter = new @reporter(@suite)
-
-  run: (files) ->
-    @suite.withDSL => require file for file in files
-    @suite.run()
-
-class module.exports.NewRunner extends EventEmitter
+module.exports = class Runner extends EventEmitter
   constructor: (@suite, @reporter = Reporter) ->
     throw "invalid suite" unless @suite? and @suite instanceof Suite
 

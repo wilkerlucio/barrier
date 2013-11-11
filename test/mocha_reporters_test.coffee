@@ -1,6 +1,6 @@
 reporters          = require("mocha").reporters
 Suite              = require("../lib/suite.coffee")
-Runner             = require("../lib/runner.coffee").NewRunner
+Runner             = require("../lib/runner.coffee")
 {reversibleChange} = require("../lib/util.coffee")
 
 disableConsole = (callback) -> reversibleChange(console, log:(->), callback)

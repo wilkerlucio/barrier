@@ -10,9 +10,6 @@ describe "Suite", ->
       expect(suite.scopes).length(1)
       expect(suite.scopes[0]).a.instanceOf(Scope)
 
-    it "has an empty list of tests", (suite) ->
-      expect(suite.testCases).empty
-
   describe "scopes", ->
     it "creates with null title", (suite) ->
       expect(suite.describe()).property("title", null)

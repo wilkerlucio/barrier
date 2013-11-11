@@ -3,7 +3,6 @@ Q                        = require("q")
 Scope                    = require("./scope.coffee")
 Case                     = require("./case.coffee")
 Exceptation              = require("./expectation.coffee")
-RunContext               = require("./run_context.coffee")
 {EventEmitter}           = require("events")
 util                     = require("./util.coffee")
 {reversibleChange, flag} = util
@@ -16,9 +15,6 @@ module.exports = class Suite extends EventEmitter
 
     @rootScope  = new Scope(null, null)
     @scopes     = [@rootScope]
-    @testCases  = []
-    @runContext = null
-    @failed     = false
 
   currentScope: -> _.last @scopes
 
@@ -57,7 +53,6 @@ module.exports = class Suite extends EventEmitter
     _.tap new Case(title, block, @currentScope(), this), (ccase) =>
       flag(ccase, key, value) for key, value of flags
       flag(ccase, "pending", true) unless _.isFunction block
-      @testCases.push(ccase)
 
   context: => @describe.apply(this, arguments)
   test: => @it.apply(this, arguments)

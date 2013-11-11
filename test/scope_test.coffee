@@ -36,14 +36,3 @@ describe "Scope", ->
     testInvalidArgs null, null
     testInvalidArgs "x", null
     testInvalidArgs null, ->
-
-  describe "#lazyFactory", ->
-    it "raises error when the lazy is not defined", (root) ->
-      expect(-> root.lazyFactory("x")).throw "Lazy dependency x wasn't defined"
-
-    it "returns the block if it's present", (root) ->
-      root.addLazy "x", (f = -> 1)
-      lazy = root.lazyFactory("x")
-      expect(lazy).property "block", f
-      expect(lazy).property "persist", false
-      expect(lazy).property "name", "x"

@@ -2,7 +2,7 @@ _           = require("underscore")
 Q           = require("q")
 {reporters} = require("mocha")
 Suite       = requireLib("suite")
-Runner      = requireLib("runner").NewRunner
+Runner      = requireLib("runner")
 S           = JSON.stringify
 
 class SpyReporter
