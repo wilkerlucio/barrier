@@ -36,7 +36,6 @@ program.on('reporters', function(){
 
 program.parse(process.argv);
 
-var Reporter = require("mocha").reporters.Dot;
 var Suite = require("../lib/suite.coffee");
 var Runner = require("../lib/runner");
 var Path = require("path");
