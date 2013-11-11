@@ -3,11 +3,10 @@ Q                        = require("q")
 Scope                    = require("./scope.coffee")
 Case                     = require("./case.coffee")
 Exceptation              = require("./expectation.coffee")
-{EventEmitter}           = require("events")
 util                     = require("./util.coffee")
 {reversibleChange, flag} = util
 
-module.exports = class Suite extends EventEmitter
+module.exports = class Suite
   constructor: ->
     @rootScope  = new Scope(null, null)
     @scopes     = [@rootScope]
