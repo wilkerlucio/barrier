@@ -31,13 +31,15 @@ module.exports = class UnitRunner
 
       if lazy
         if lazy.persist
-          lazy._cache ?= @injectedBlock(lazy.block)()
+          lazy._cache ?= @inject(lazy.block)
         else
-          @lazyCache[lazyName] ?= @injectedBlock(lazy.block)()
+          @lazyCache[lazyName] ?= @inject(lazy.block)
       else
         Q.reject "Lazy block '#{lazyName}' wasn't defined"
     )).then (args) =>
       block.apply(this, args)
+
+  inject: (block) -> @injectedBlock(block)()
 
   waitFor: (promise) ->
     promise.finally @taskDone
@@ -45,7 +47,7 @@ module.exports = class UnitRunner
 
   parallelWait: (block) ->
     =>
-      @waitFor @injectedBlock(block)()
+      @waitFor @inject(block)
 
       @defer = Q.defer()
       @defer.promise
