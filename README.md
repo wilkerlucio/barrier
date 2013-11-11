@@ -328,7 +328,4 @@ TODO (PR's would be welcome):
 ----------------------------
 
 * Browser runner (browserify is a good option)
-* Support lazy into before and after (beforeEach and afterEach is ok already)
-* Real unit tests (I decided to test barrier with barrier itself, that made hard to have unit tests on beginning... sorry, my bad)
-* Improve error stacks
 * Verbose mode logging each step block
