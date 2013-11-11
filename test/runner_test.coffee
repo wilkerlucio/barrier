@@ -65,7 +65,7 @@ describe "Runner", ->
         suite = new Suite()
         ctx.context = suite.context "", ->
           ctx.test = suite.test "", testFn
-        runner = new Runner(suite, SpyReporter)
+        runner = new Runner(suite, SpyReporter, timeout: 20)
 
         runner.run().then -> runner.reporter.check([
           [ "start" ]
@@ -80,6 +80,7 @@ describe "Runner", ->
     testRunTest "runs with a pending test", "pending"
     testRunTest "runs with a passing test", "pass", ->
     testRunTest "runs with a failing test", "fail", (-> throw "This failed"), "This failed"
+    testRunTest "runs with a timeout failing test", "fail", (-> @async()), {}
     testRunTest "runs with a test that returns a promise", "pass", -> Q(null)
     testRunTest "runs with a failing promise test", "fail", (-> Q.reject("error")), "error"
 

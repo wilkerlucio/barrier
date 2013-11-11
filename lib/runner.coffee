@@ -7,8 +7,12 @@ Reporter       = require("mocha").reporters.Dot
 util           = require("./util.coffee")
 
 module.exports = class Runner extends EventEmitter
-  constructor: (@suite, @reporter = Reporter) ->
+  constructor: (@suite, @reporter = Reporter, options = {}) ->
     throw "invalid suite" unless @suite? and @suite instanceof Suite
+
+    @options = _.extend
+      timeout: 2000
+    , options
 
     @reporter = new @reporter(this)
 
@@ -33,7 +37,7 @@ module.exports = class Runner extends EventEmitter
       @emit("pending", test)
       @emit("test end", test)
     else
-      new UnitRunner(test).run()
+      new UnitRunner(test).run().timeout(@options.timeout)
         .then(=> @emit("pass", test))
         .fail((err) => @emit("fail", test, err))
         .finally(=> @emit("test end", test))

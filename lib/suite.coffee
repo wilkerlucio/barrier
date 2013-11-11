@@ -8,11 +8,7 @@ util                     = require("./util.coffee")
 {reversibleChange, flag} = util
 
 module.exports = class Suite extends EventEmitter
-  constructor: (options = {})->
-    @options = _.extend
-      timeout: 2000
-    , options
-
+  constructor: ->
     @rootScope  = new Scope(null, null)
     @scopes     = [@rootScope]
 
