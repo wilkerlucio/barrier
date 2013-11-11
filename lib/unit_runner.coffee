@@ -58,10 +58,10 @@ module.exports = class UnitRunner
 
   parallelWait: (block) ->
     =>
-      @waitFor @inject(block)
-
-      @defer = Q.defer()
-      @defer.promise
+      @inject(block).then =>
+        @defer = Q.defer()
+        @taskDone()
+        @defer.promise
 
   allTasksDone: -> _.every @tasks, (task) -> !task.isPending()
 
