@@ -49,7 +49,8 @@ module.exports = class UnitRunner
       error = e
 
     promise.fail (err) ->
-      err.stack += "\n" + e.stack
+      stack = error.stack
+      err.stack += "\n" + stack.substring(stack.indexOf("\n") + 1)
       throw err
 
     promise.finally @taskDone
