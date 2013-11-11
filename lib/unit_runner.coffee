@@ -42,6 +42,16 @@ module.exports = class UnitRunner
   inject: (block) -> @injectedBlock(block)()
 
   waitFor: (promise) ->
+    error = null
+    try
+      throw new Error()
+    catch e
+      error = e
+
+    promise.fail (err) ->
+      err.stack += "\n" + e.stack
+      throw err
+
     promise.finally @taskDone
     @tasks.push(promise)
 
