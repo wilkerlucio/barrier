@@ -15,7 +15,7 @@ describe "Test Runner", ->
     test = new Case("", block, scope)
     unit = new UnitRunner(test)
 
-    expect(unit.run(), "block must had ran").true
+    unit.run().then -> expect(ran, "block must had ran").true
 
   describe "beforeEach blocks", ->
     it "must run the before blocks on parent ancestors", ->
@@ -175,3 +175,37 @@ describe "Test Runner", ->
       unit.run().then ->
         unit2.run().then ->
           expect(callCount, "lazy must had cached").eql(1)
+
+  describe "parallel wait", ->
+    delayedCall = (wait, fn) ->
+      defer = Q.defer()
+      setTimeout ->
+        defer.resolve(Q.promised(fn)())
+      , wait
+      defer.promise
+
+    it "waits for added parallel tasks", ->
+      seq = []
+      scope = new Scope("")
+      scope.hook "afterEach", -> seq.push(2)
+      test = new Case("", (->
+        @waitFor delayedCall(10, -> seq.push(1))
+
+        null
+      ), scope)
+
+      unit = new UnitRunner(test)
+      unit.run().then ->
+        expect(seq, "waited on the test before the next").eql([1, 2])
+
+    it "catches error on parallel runs", ->
+      scope = new Scope("")
+      test = new Case("", (->
+        @waitFor delayedCall(10, -> throw "err")
+
+        null
+      ), scope)
+
+      unit = new UnitRunner(test)
+      unit.run().fail (e) ->
+        expect(e).eq "err"

@@ -5,11 +5,12 @@ util = require("./util.coffee")
 module.exports = class UnitRunner
   constructor: (@test) ->
     @lazyCache = {}
+    @tasks = []
 
   run: ->
     util.qSequence([].concat(
       @beforeEachBlocks()
-      @injectedBlock(@test.block)
+      @parallelWait(@test.block)
     )).finally => util.qSequence @afterEachBlocks()
 
   beforeEachBlocks: ->
@@ -33,3 +34,20 @@ module.exports = class UnitRunner
         Q.reject "Lazy block '#{lazyName}' wasn't defined"
     )).then (args) =>
       block.apply(this, args)
+
+  waitFor: (promise) ->
+    promise.finally @taskDone
+    @tasks.push(promise)
+
+  parallelWait: (block) ->
+    =>
+      @waitFor @injectedBlock(block)()
+
+      @defer = Q.defer()
+      @defer.promise
+
+  allTasksDone: -> _.every @tasks, (task) -> !task.isPending()
+
+  taskDone: =>
+    if @defer.promise.isPending() and @allTasksDone()
+      @defer.resolve(Q.all(@tasks))
