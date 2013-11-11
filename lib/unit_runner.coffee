@@ -1,6 +1,7 @@
-_    = require("underscore")
-Q    = require("q")
-util = require("./util.coffee")
+_           = require("underscore")
+Q           = require("q")
+Exceptation = require("./expectation.coffee")
+util        = require("./util.coffee")
 
 module.exports = class UnitRunner
   constructor: (@test) ->
@@ -8,10 +9,13 @@ module.exports = class UnitRunner
     @tasks = []
 
   run: ->
+    dslRevert = util.reversibleChange(global, expect: @expect, barrierContext: this)
+
     util.qSequence([].concat(
       @beforeEachBlocks()
       @parallelWait(@test.block)
-    )).finally => util.qSequence @afterEachBlocks()
+    )).finally =>
+      util.qSequence @afterEachBlocks().concat(dslRevert)
 
   beforeEachBlocks: ->
     _.flatten(_.invoke util.ancestorChain(@test.parent).reverse(), "hook", "beforeEach")
@@ -51,3 +55,7 @@ module.exports = class UnitRunner
   taskDone: =>
     if @defer.promise.isPending() and @allTasksDone()
       @defer.resolve(Q.all(@tasks))
+
+  # DSL Methods
+
+  expect: (args...) => new Exceptation(args...)

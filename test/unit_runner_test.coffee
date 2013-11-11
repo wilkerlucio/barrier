@@ -209,3 +209,28 @@ describe "Test Runner", ->
       unit = new UnitRunner(test)
       unit.run().fail (e) ->
         expect(e).eq "err"
+
+  describe "globals", ->
+    it "sets the expect global", ->
+      expectVar = false
+
+      scope = new Scope("")
+      test = new Case("", (->
+        expectVar = expect == unit.expect
+      ), scope)
+
+      unit = new UnitRunner(test)
+      unit.run().then (e) ->
+        expect(expectVar, "global expect is set correctly").true
+
+    it "sets the barrierContext global", ->
+      expectVar = false
+
+      scope = new Scope("")
+      test = new Case("", (->
+        expectVar = barrierContext == unit
+      ), scope)
+
+      unit = new UnitRunner(test)
+      unit.run().then (e) ->
+        expect(expectVar, "global barrierContext is set correctly").true
