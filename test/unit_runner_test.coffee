@@ -257,21 +257,20 @@ describe "Test Runner", ->
       unit.run().then ->
         expect(seq, "waited on the test before the next").eql([1, 2])
 
-    # it "catches errors into async", ->
-    #   called = false
-    #   scope = new Scope("")
-    #   test = new Case("", (->
-    #     done = @async()
+    it "catches errors into async", ->
+      scope = new Scope("")
+      test = new Case("", (->
+        done = @async()
+        setTimeout ->
+          done("err")
+        , 10
 
+        null
+      ), scope)
 
-
-    #     null
-    #   ), scope)
-
-    #   unit = new UnitRunner(test)
-    #   unit.run().fail (e) ->
-    #     expect(e).eq "err"
-
+      unit = new UnitRunner(test)
+      unit.run().fail (e) ->
+        expect(e).eq "err"
 
   describe "globals", ->
     it "sets the expect global", ->
