@@ -25,7 +25,7 @@ program
 //     process.exit(passed ? 0 : 1);
 //   });
 
-var Reporter = require("mocha").reporters.Dot;
+var Reporter = require("mocha").reporters.Spec;
 var Suite = require("../lib/suite.coffee");
 var Runner = require("../lib/runner");
 var Path = require("path");
