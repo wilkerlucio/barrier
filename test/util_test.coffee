@@ -151,3 +151,12 @@ describe "Util", ->
       expect(ancestorChain(root)).deep.property("[0].x", 1)
       expect(ancestorChain(root)).deep.property("[1].y", 2)
       expect(ancestorChain(root)).deep.property("[2].z", 3)
+
+  describe "functionArgNames", ->
+    {functionArgNames} = util
+
+    it "returns blank array when no arguments", ->
+      expect(functionArgNames(->)).eql []
+
+    it "returns the argument names", ->
+      expect(functionArgNames((x, y)->)).eql ["x", "y"]

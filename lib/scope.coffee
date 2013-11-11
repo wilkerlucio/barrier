@@ -4,7 +4,7 @@ util = require("./util.coffee")
 fk   = util.flag.key
 
 class LazyBlock
-  constructor: (@block, @persist, @name) ->
+  constructor: (@block, @persist, @name, @scope) ->
 
   value: ->
     context = barrierContext
@@ -47,7 +47,7 @@ module.exports = class Scope
   addLazy: (name, persist, block) ->
     [block, persist] = [persist, false] if arguments.length == 2
 
-    @lazyBlocks[name] = new LazyBlock(block, persist, name)
+    @lazyBlocks[name] = new LazyBlock(block, persist, name, this)
 
   lazyFactory: (name) ->
     block = util.parentLookup(this, "lazyBlocks", name)

@@ -38,7 +38,7 @@ module.exports = class Expectation extends Assertion
 
   @promisify: (fn, name = null) -> (args...) ->
     task = @resolveFlags().then => Q.promised(fn).apply(this, args)
-    barrierContext.pushTask(task, "expectation #{name}")
+    barrierContext.waitFor(task, "expectation #{name}")
 
     this
 
@@ -68,7 +68,7 @@ Expectation.addMethod "reject", (args...) ->
     .catch((err) -> -> throw err)
     .then (resolvedFn) => flag(this, "object", resolvedFn).throw(args...)
 
-  barrierContext.pushTask(promise)
+  barrierContext.waitFor(promise)
 
   this
 

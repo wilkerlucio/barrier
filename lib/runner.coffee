@@ -1,6 +1,7 @@
 _              = require("underscore")
 Q              = require("q")
 Suite          = require("./suite.coffee")
+UnitRunner     = require("./unit_runner.coffee")
 Reporter       = require("mocha").reporters.Dot
 {EventEmitter} = require("events")
 util           = require("./util.coffee")
@@ -41,7 +42,7 @@ class module.exports.NewRunner extends EventEmitter
       @emit("pending", test)
       @emit("test end", test)
     else
-      Q.promised(test.block)()
+      new UnitRunner(test).run()
         .then(=> @emit("pass", test))
         .fail((err) => @emit("fail", test, err))
         .finally(=> @emit("test end", test))

@@ -14,3 +14,7 @@ describe "Case", ->
 
     it "is not pending when the block is provided", (scope) ->
       expect(new Case("", (->), scope).isPending()).false
+
+  describe "#lazy", ->
+
+

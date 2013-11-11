@@ -11,13 +11,15 @@ extractArgs = (fn) ->
 
 module.exports = class RunContext
   constructor: (@case) ->
+    throw "Run context requires a test" unless @case
+
     @tasks = []
     @lazys = {}
 
     @defer = Q.defer()
     @done = @defer.promise
 
-  pushTask: (task, description = null) ->
+  waitFor: (task, description = null) ->
     task.description = description
     task.finally(@taskDone)
     @tasks.push(task)
@@ -54,7 +56,7 @@ module.exports = class RunContext
 
   async: ->
     defer = Q.defer()
-    @pushTask(defer.promise, "async call")
+    @waitFor(defer.promise, "async call")
 
     (err) ->
       if err == undefined

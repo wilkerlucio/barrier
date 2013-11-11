@@ -14,7 +14,7 @@ module.exports = class Case
     context = barrierContext
 
     chain = @runList(@parent.allBeforeBlocks()).then => context.injectFunction(@block)
-    context.pushTask(chain, "test main chain")
+    context.waitFor(chain, "test main chain")
 
   runAfters: (next) ->
     @runList(@parent.allAfterEachBlocks()).then =>

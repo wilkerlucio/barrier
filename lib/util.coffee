@@ -51,4 +51,12 @@ module.exports = util =
   ancestorChain: (obj) ->
     if obj then [obj].concat(util.ancestorChain(obj.parent)) else []
 
+  functionArgNames: (fn) ->
+    string = fn.toString()
+
+    if match = string.match(/^function\s?\((.+?)\)/)
+      _.map match[1].split(","), (word) -> word.replace(/^\s+|\s+$/g, '')
+    else
+      []
+
 util.flag.key = "__flags"
