@@ -10,11 +10,13 @@ module.exports = class UnitRunner
 
   run: ->
     dslRevert = util.reversibleChange(global, expect: @expect, barrierContext: this)
+    start = new Date
 
     util.qSequence([].concat(
       @beforeEachBlocks()
       @parallelWait(@test.block)
     )).finally =>
+      @test.duration = new Date - start
       util.qSequence @afterEachBlocks().concat(dslRevert)
 
   beforeEachBlocks: ->

@@ -17,6 +17,15 @@ describe "Test Runner", ->
 
     unit.run().then -> expect(ran, "block must had ran").true
 
+  it "sets the duration of the test", ->
+    ran = false
+    block = -> ran = true
+    scope = new Scope("")
+    test = new Case("", block, scope)
+    unit = new UnitRunner(test)
+
+    unit.run().then -> expect(test.duration).not.undefined
+
   describe "beforeEach blocks", ->
     it "must run the before blocks on parent ancestors", ->
       seq = []

@@ -15,6 +15,12 @@ describe "Case", ->
     it "is not pending when the block is provided", (scope) ->
       expect(new Case("", (->), scope).isPending()).false
 
-  describe "#lazy", ->
+  describe "#slow", ->
+    lazy "tcase", (scope) -> new Case("", null, scope)
 
+    it "returns 75 by default", (tcase) ->
+      expect(tcase.slow()).eq 75
 
+    it "can set the slow", (tcase) ->
+      tcase.slow(100)
+      expect(tcase.slow()).eq 100

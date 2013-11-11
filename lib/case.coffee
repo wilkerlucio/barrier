@@ -10,10 +10,14 @@ module.exports = class Case
     @[fk] = _.clone(@parent[fk])
     @parent.tests.push(this)
 
+    @_slow = 75
+
   fullTitle: ->
     "#{@parent.fullTitle()} #{@title}"
 
   isPending: -> !@block
 
   # this method is here to make Barrier Case compatible with Mocha reporters
-  slow: -> this
+  slow: (value) ->
+    return @_slow if arguments.length == 0
+    @_slow = value
