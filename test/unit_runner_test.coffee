@@ -64,10 +64,11 @@ describe "Test Runner", ->
       scope.hook "beforeEach", -> seq.push(1)
       scope.hook "afterEach", -> seq.push(2)
 
-      test = new Case("", (-> throw 'err'), scope)
+      test = new Case("", (-> expect(true).false), scope)
       unit = new UnitRunner(test)
 
-      unit.run().fail ->
+      p = unit.run()
+      p.fail ->
         expect(seq, "before blocks must had ran in order").eql([1, 2])
 
     it "still fails when the after block fails", ->
@@ -235,6 +236,42 @@ describe "Test Runner", ->
       unit = new UnitRunner(test)
       unit.run().fail (e) ->
         expect(e).eq "err"
+
+  describe "async", ->
+    it "fires async calls and wait for the done", ->
+      seq = []
+      scope = new Scope("")
+      scope.hook "afterEach", -> seq.push(2)
+      test = new Case("", (->
+        done = @async()
+
+        setTimeout ->
+          seq.push(1)
+          done()
+        , 10
+
+        null
+      ), scope)
+
+      unit = new UnitRunner(test)
+      unit.run().then ->
+        expect(seq, "waited on the test before the next").eql([1, 2])
+
+    # it "catches errors into async", ->
+    #   called = false
+    #   scope = new Scope("")
+    #   test = new Case("", (->
+    #     done = @async()
+
+
+
+    #     null
+    #   ), scope)
+
+    #   unit = new UnitRunner(test)
+    #   unit.run().fail (e) ->
+    #     expect(e).eq "err"
+
 
   describe "globals", ->
     it "sets the expect global", ->

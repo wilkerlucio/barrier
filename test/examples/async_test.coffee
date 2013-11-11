@@ -4,7 +4,7 @@ describe "async testing", ->
   it "supports async", ->
     done = @async()
 
-    setTimeout Q.fbind ->
+    setTimeout ->
       expect(true).eq(true)
       done()
     , 40
