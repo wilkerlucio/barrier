@@ -5,6 +5,7 @@ module.exports = (grunt) ->
 
   grunt.registerMultiTask "barriercli", "Run Barrier test suite", ->
     done = @async()
+    options = @options()
 
     files = []
 
@@ -12,13 +13,19 @@ module.exports = (grunt) ->
       pair.src.forEach (f) ->
         files.push(Path.resolve(f))
 
+    args = []
+
+    if options.reporter
+      args.push "--reporter"
+      args.push options.reporter
+
     spawnOptions =
       opts:
         env: process.env
         stdio: 'inherit'
 
       cmd: Path.resolve(Path.join(__dirname, "bin", "barrier"))
-      args: grunt.file.expand(files)
+      args: args.concat grunt.file.expand(files)
 
     grunt.util.spawn spawnOptions, (err, output) -> done()
 
@@ -27,10 +34,15 @@ module.exports = (grunt) ->
 
     barriercli:
       all: ["test/helper.coffee", "test/**/*_test.coffee"]
+      ci:
+        options:
+          reporter: "spec"
+
+        src: ["test/helper.coffee", "test/**/*_test.coffee"]
 
     watch:
       test:
         files: ["Gruntfile.coffee", "test/**/*", "lib/**/*"]
-        tasks: ["barriercli"]
+        tasks: ["barriercli:all"]
 
-  grunt.registerTask "default", ["barriercli", "watch"]
+  grunt.registerTask "default", ["barriercli:all", "watch"]
