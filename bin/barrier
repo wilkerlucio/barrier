@@ -54,6 +54,6 @@ suite.withDSL(function() {
 
 var runner = new Runner(suite);
 runner.reporter(program.reporter || "dot");
-runner.run().then(function(passed) {
-  process.exit(passed ? 0 : 1);
+runner.run().then(function() {
+  process.exit(runner.stats.failures);
 });
