@@ -1,4 +1,5 @@
 Case = requireLib("case")
+{flag} = requireLib("util")
 
 describe "Case", ->
   lazy "scope", ->
@@ -14,6 +15,12 @@ describe "Case", ->
 
     it "is not pending when the block is provided", (scope) ->
       expect(new Case("", (->), scope).isPending()).false
+
+    it "is pending if has the skip flag", (scope) ->
+      test = new Case("", (->), scope)
+      flag(test, "skip", true)
+
+      expect(test.isPending()).true
 
   describe "#slow", ->
     lazy "tcase", (scope) -> new Case("", null, scope)

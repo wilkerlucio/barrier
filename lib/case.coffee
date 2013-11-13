@@ -15,7 +15,7 @@ module.exports = class Case
   fullTitle: ->
     "#{@parent.fullTitle()} #{@title}"
 
-  isPending: -> !@block
+  isPending: -> !@block || !!util.flag(this, "skip")
 
   # this method is here to make Barrier Case compatible with Mocha reporters
   slow: (value) ->
