@@ -327,5 +327,10 @@ Get much more examples [here](https://github.com/wilkerlucio/barrier/blob/master
 TODO (PR's would be welcome):
 ----------------------------
 
-* Browser runner (browserify is a good option)
+* Separate Interface code from Suite
+* Make suite pre-processors
+* Feature to run a single test/suite (using pre-processors)
 * Verbose mode logging each step block
+* Browser runner (browserify is a good option)
+* Isolated tests flag (for parallel testing)
+* TDD Interface
