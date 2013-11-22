@@ -54,6 +54,12 @@ describe "Runner", ->
 
       expect(runner.reporter()).instanceOf(require("mocha").reporters.Spec)
 
+    it "works by sending the reporter function", (suite) ->
+      runner = new Runner(suite)
+      runner.reporter(require("mocha").reporters.Dot)
+
+      expect(runner.reporter()).instanceOf(require("mocha").reporters.Dot)
+
     it "raises error when using invalid option", (suite) ->
       runner = new Runner(suite)
       expect(-> runner.reporter("invalid")).throw "Cannot find reporter 'invalid'"
