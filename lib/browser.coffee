@@ -3,6 +3,7 @@ Runner = require("./runner.coffee")
 
 ConsoleReporter = (runner) ->
   runner.on "start", ->
+    console.time("Test Suite")
 
   runner.on "suite", (suite) ->
     console.group(suite.title)
@@ -10,12 +11,14 @@ ConsoleReporter = (runner) ->
   runner.on "test", ->
 
   runner.on "pass", (test) ->
-    console.log("%c #{test.title}", "color: #0c0")
+    console.log("%c#{test.title}", "color: #0c0")
 
   runner.on "fail", (test, err) ->
     console.error(test.title, err.stack)
 
-  runner.on "pending", ->
+  runner.on "pending", (test) ->
+    console.log("%c#{test.title}", "color: #ccca1b")
+
   runner.on "hook", ->
   runner.on "test end", ->
 
@@ -23,6 +26,7 @@ ConsoleReporter = (runner) ->
     console.groupEnd()
 
   runner.on "end", ->
+    console.timeEnd("Test Suite")
 
 suite = new Suite()
 dsl = suite.withDSL()
