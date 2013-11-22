@@ -6,7 +6,7 @@ program
   .usage("[options] <file ...>")
   .option("-v, --verbose")
   .option("-R, --reporter <name>", "specify the reporter to use")
-  .option "--reporters", "display available reporters"
+  .option("--reporters", "display available reporters")
 
 program.on "reporters", ->
   console.log()
@@ -31,7 +31,7 @@ program.on "reporters", ->
 program.parse process.argv
 
 Suite  = require("../lib/suite.coffee")
-Runner = require("../lib/runner")
+Runner = require("../lib/runner.coffee")
 Path   = require("path")
 _      = require("underscore")
 

@@ -1,18 +1,18 @@
 require("better-stack-traces").install()
 
-_ = require("underscore")
-Q = require("q")
+_    = require("underscore")
+Q    = require("q")
 Path = require("path")
 
 requireChai = (path) ->
   chaiBase = Path.dirname(require.resolve("chai"))
   require Path.join(chaiBase, path)
 
-utils = requireChai("lib/chai/utils")
-assertions = requireChai("lib/chai/core/assertions")
+utils          = requireChai("lib/chai/utils")
+assertions     = requireChai("lib/chai/core/assertions")
 AssertionError = requireChai("node_modules/assertion-error")
 
-chai = "AssertionError": AssertionError
+chai   = "AssertionError": AssertionError
 {flag} = require("./util.coffee")
 
 requireChai("lib/chai/assertion")(chai, utils)

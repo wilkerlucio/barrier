@@ -1,11 +1,12 @@
 _              = require("underscore")
 Q              = require("q")
-Suite          = require("./suite.coffee")
-UnitRunner     = require("./unit_runner.coffee")
 Reporter       = require("mocha").reporters.Dot
 {EventEmitter} = require("events")
-util           = require("./util.coffee")
 path           = require("path")
+
+Suite          = require("./suite.coffee")
+UnitRunner     = require("./unit_runner.coffee")
+util           = require("./util.coffee")
 
 module.exports = class Runner extends EventEmitter
   constructor: (@suite, options = {}) ->
