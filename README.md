@@ -331,6 +331,5 @@ TODO (PR's would be welcome):
 * Make suite pre-processors
 * Feature to run a single test/suite (using pre-processors)
 * Verbose mode logging each step block
-* Browser runner (browserify is a good option)
 * Isolated tests flag (for parallel testing)
 * TDD Interface
