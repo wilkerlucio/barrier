@@ -33,7 +33,7 @@
     "better-stack-traces": "~1.0.0",
     "grunt-shell": "~0.6.0",
     "browserify": "~2.35.4",
-    "grunt-barrier": "~0.1.0"
+    "grunt-barrier": "~0.1.1"
   },
   "files": [
     "bin",
