@@ -2,7 +2,6 @@ _                        = require("underscore")
 Q                        = require("q")
 Scope                    = require("./scope.coffee")
 Case                     = require("./case.coffee")
-Exceptation              = require("./expectation.coffee")
 util                     = require("./util.coffee")
 {reversibleChange, flag} = util
 
@@ -60,7 +59,5 @@ module.exports = class Suite
   hook:  (context, block) => @currentScope().hook(context, block)
 
   lazy: (args...) => @currentScope().addLazy(args...)
-
-  expect: (args...) => new Exceptation(args...)
 
   toJSON: -> rootScope: @rootScope.toJSON()

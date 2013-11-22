@@ -1,8 +1,7 @@
 _              = require("underscore")
 Q              = require("q")
-Reporter       = require("mocha").reporters.Dot
-{EventEmitter} = require("events")
 path           = require("path")
+{EventEmitter} = require("events")
 
 Suite          = require("./suite.coffee")
 UnitRunner     = require("./unit_runner.coffee")

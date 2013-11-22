@@ -1,3 +1,4 @@
+require("better-stack-traces").install()
 path = require("path")
 
 global.requireLib = (modules...) ->

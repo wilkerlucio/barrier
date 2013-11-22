@@ -23,13 +23,16 @@
     "commander": "~2.0.0",
     "chai": "~1.8.1",
     "mocha": "~1.13.0",
-    "better-stack-traces": "~1.0.0",
     "sinon": "~1.7.3"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-contrib-watch": "~0.5.3",
-    "grunt-cli": "~0.1.9"
+    "grunt-cli": "~0.1.9",
+    "coffeeify": "~0.5.2",
+    "better-stack-traces": "~1.0.0",
+    "grunt-shell": "~0.6.0",
+    "browserify": "~2.35.4"
   },
   "files": [
     "bin",

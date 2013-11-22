@@ -2,37 +2,13 @@ Path = require("path")
 
 module.exports = (grunt) ->
   grunt.loadNpmTasks("grunt-contrib-watch")
-
-  grunt.registerMultiTask "barriercli", "Run Barrier test suite", ->
-    done = @async()
-    options = @options()
-
-    files = []
-
-    @files.forEach (pair) ->
-      pair.src.forEach (f) ->
-        files.push(Path.resolve(f))
-
-    args = []
-
-    if options.reporter
-      args.push "--reporter"
-      args.push options.reporter
-
-    spawnOptions =
-      opts:
-        env: process.env
-        stdio: 'inherit'
-
-      cmd: Path.resolve(Path.join(__dirname, "bin", "barrier"))
-      args: args.concat grunt.file.expand(files)
-
-    grunt.util.spawn spawnOptions, (err, output) -> done()
+  grunt.loadNpmTasks("grunt-barrier")
+  grunt.loadNpmTasks("grunt-shell")
 
   grunt.initConfig
     pkg: grunt.file.readJSON("package.json")
 
-    barriercli:
+    barrier:
       all: ["test/helper.coffee", "test/**/*_test.coffee"]
       ci:
         options:
@@ -40,9 +16,13 @@ module.exports = (grunt) ->
 
         src: ["test/helper.coffee", "test/**/*_test.coffee"]
 
+    shell:
+      buildweb:
+        command: "./node_modules/.bin/browserify -t coffeeify lib/browser.coffee > barrier.js"
+
     watch:
       test:
         files: ["Gruntfile.coffee", "test/**/*", "lib/**/*"]
-        tasks: ["barriercli:all"]
+        tasks: ["barrier:all"]
 
-  grunt.registerTask "default", ["barriercli:all", "watch"]
+  grunt.registerTask "default", ["barrier:all", "watch"]
