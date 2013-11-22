@@ -7,7 +7,7 @@
     "barrier": "./bin/barrier"
   },
   "scripts": {
-    "test": "./node_modules/grunt-cli/bin/grunt barriercli:ci"
+    "test": "./node_modules/grunt-cli/bin/grunt barrier:ci"
   },
   "author": "Wilker Lucio <wilkerlucio@gmail.com>",
   "license": "MIT",
