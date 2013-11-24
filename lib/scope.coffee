@@ -1,5 +1,4 @@
 _    = require("underscore")
-Q    = require("q")
 util = require("./util.coffee")
 fk   = util.flag.key
 

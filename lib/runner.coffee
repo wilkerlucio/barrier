@@ -1,5 +1,6 @@
 _              = require("underscore")
-Q              = require("q")
+wfn            = require("when/function")
+timeout        = require("when/timeout")
 path           = require("path")
 {EventEmitter} = require("events")
 
@@ -34,8 +35,7 @@ module.exports = class Runner extends EventEmitter
 
   run: ->
     @emit("start")
-    @runScope(@suite.rootScope).finally =>
-      @emit("end")
+    @runScope(@suite.rootScope).ensure => @emit("end")
 
   runScope: (scope) ->
     @emit("suite", scope) if scope.parent
@@ -53,15 +53,15 @@ module.exports = class Runner extends EventEmitter
       @emit("pending", test)
       @emit("test end", test)
     else
-      new UnitRunner(test).run().timeout(@options.timeout)
+      timeout(@options.timeout, new UnitRunner(test).run())
         .then(=> @emit("pass", test))
-        .fail((err) => @emit("fail", test, err))
-        .finally(=> @emit("test end", test))
+        .otherwise((err) => @emit("fail", test, err))
+        .ensure(=> @emit("test end", test))
 
   runHook: (name, block) ->
     @emit("hook", block, name)
 
-    Q.promised(block)()
+    wfn.call(block)
       .then => @emit("hook end", block, name)
 
   sequence: (list, prepare) -> util.qSequence(_.map(list, prepare))

@@ -1,5 +1,6 @@
-_ = require("underscore")
-Q = require("q")
+_   = require("underscore")
+W   = require("when")
+wfn  = require("when/function")
 
 module.exports = util =
   reversibleChange: (obj, extension, block) ->
@@ -19,15 +20,15 @@ module.exports = util =
       null
 
     if block?
-      Q(block()).then -> restore()
+      wfn.call(block).then -> restore()
     else
       restore
 
   qSequence: (sequence, acc = null) ->
     sequence ||= []
-    return Q(acc) unless sequence.length
+    return W(acc) unless sequence.length
 
-    promise = Q.promised(sequence.shift())(acc)
+    promise = wfn.call(sequence.shift(), acc)
     promise.then (res) -> util.qSequence(sequence, res)
 
   flag: (obj, key, value) ->

@@ -1,4 +1,5 @@
-Q = require("q")
+W     = require("when")
+delay = require("when/delay")
 
 module.exports =
-  dv: (value) -> Q(value).delay(Math.round(Math.random() * 10))
+  dv: (value) -> delay(value, Math.round(Math.random() * 10))

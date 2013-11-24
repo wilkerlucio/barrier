@@ -1,4 +1,3 @@
-Q      = require("q")
 Suite  = require("./suite.coffee")
 Runner = require("./runner.coffee")
 
@@ -39,5 +38,4 @@ window.BarrierRun = ->
   runner.reporter ConsoleReporter
   runner.run()
 
-window.BarrierQ = Q
 window.onload = BarrierRun unless BARRIER_NO_AUTORUN?

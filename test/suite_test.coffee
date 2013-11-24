@@ -1,5 +1,3 @@
-Q = require("q")
-
 [Suite, Scope, {flag}] = requireLib("suite", "scope", "util")
 
 describe "Suite", ->

@@ -1,5 +1,6 @@
 _          = require("underscore")
-Q          = require("q")
+W = require("when")
+wfn = require("when/function")
 Scope      = requireLib("scope")
 Case       = requireLib("case")
 UnitRunner = requireLib("unit_runner")
@@ -51,7 +52,7 @@ describe "Test Runner", ->
       test = new Case("", (-> seq.push(2)), scope)
       unit = new UnitRunner(test)
 
-      unit.run().catch ->
+      unit.run().otherwise ->
         expect(seq, "before blocks must had ran in order").eql([1])
 
   describe "afterEach blocks", ->
@@ -77,7 +78,7 @@ describe "Test Runner", ->
       unit = new UnitRunner(test)
 
       p = unit.run()
-      p.fail ->
+      p.otherwise ->
         expect(seq, "before blocks must had ran in order").eql([1, 2])
 
     it "still fails when the after block fails", ->
@@ -90,7 +91,7 @@ describe "Test Runner", ->
       test = new Case("", (-> seq.push(2)), scope)
       unit = new UnitRunner(test)
 
-      unit.run().fail (e) ->
+      unit.run().otherwise (e) ->
         expect(e).eq('err')
         expect(seq, "before blocks must had ran in order").eql([1, 2])
 
@@ -106,7 +107,7 @@ describe "Test Runner", ->
       test = new Case("", (-> throw 'err'), scope)
       unit = new UnitRunner(test)
 
-      unit.run().fail (e) ->
+      unit.run().otherwise (e) ->
         expect(e).eq 'err'
         expect(seq, "before blocks must had ran in order").eql([1, 2, 3])
 
@@ -127,7 +128,7 @@ describe "Test Runner", ->
       seq = []
 
       scope = new Scope("")
-      scope.addLazy "x", -> Q("y")
+      scope.addLazy "x", -> W("y")
 
       test = new Case("", ((x) -> seq.push(x)), scope)
       unit = new UnitRunner(test)
@@ -140,7 +141,7 @@ describe "Test Runner", ->
       test = new Case("", ((x) -> null), scope)
       unit = new UnitRunner(test)
 
-      unit.run().fail (e) ->
+      unit.run().otherwise (e) ->
         expect(e).eq "Lazy block 'x' wasn't defined"
 
     it "can use lazys on lazys", ->
@@ -214,9 +215,9 @@ describe "Test Runner", ->
 
   describe "parallel wait", ->
     delayedCall = (wait, fn) ->
-      defer = Q.defer()
+      defer = W.defer()
       setTimeout ->
-        defer.resolve(Q.promised(fn)())
+        defer.resolve(wfn.call(fn))
       , wait
       defer.promise
 
@@ -243,7 +244,7 @@ describe "Test Runner", ->
       ), scope)
 
       unit = new UnitRunner(test)
-      unit.run().fail (e) ->
+      unit.run().otherwise (e) ->
         expect(e).eq "err"
 
   describe "async", ->
@@ -278,7 +279,7 @@ describe "Test Runner", ->
       ), scope)
 
       unit = new UnitRunner(test)
-      unit.run().fail (e) ->
+      unit.run().otherwise (e) ->
         expect(e).eq "err"
 
   describe "globals", ->

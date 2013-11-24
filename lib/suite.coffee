@@ -1,5 +1,4 @@
 _                        = require("underscore")
-Q                        = require("q")
 Scope                    = require("./scope.coffee")
 Case                     = require("./case.coffee")
 util                     = require("./util.coffee")

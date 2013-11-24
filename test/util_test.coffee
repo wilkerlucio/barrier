@@ -1,5 +1,5 @@
 _    = require("underscore")
-Q    = require("q")
+W    = require("when")
 util = require("../lib/util.coffee")
 
 describe "Util", ->
@@ -48,13 +48,13 @@ describe "Util", ->
       expect(qs [-> "x"]).eq "x"
 
     it "runs once function with promises", ->
-      expect(qs [-> Q("x")]).eq "x"
+      expect(qs [-> W("x")]).eq "x"
 
     it "runs once function and sends the argument", ->
-      expect(qs [(x) -> Q(x.toUpperCase())], "x").eq "X"
+      expect(qs [(x) -> W(x.toUpperCase())], "x").eq "X"
 
     it "rejects when the promise rejects", ->
-      expect(qs [-> Q.reject("some error")]).hold.reject "some error"
+      expect(qs [-> W.reject("some error")]).hold.reject "some error"
 
     it "rejects when the function throws an error", ->
       expect(qs [-> throw "some error"]).hold.reject "some error"
@@ -63,7 +63,7 @@ describe "Util", ->
       expect(qs [(-> "x"), ((x) -> x + "y")]).eq "xy"
 
     it "chain with mixed promises and values", ->
-      expect(qs [(-> "x"), ((x) -> Q(x + "y"))]).eq "xy"
+      expect(qs [(-> "x"), ((x) -> W(x + "y"))]).eq "xy"
 
     it "handles reject into middle term having multiple terms", ->
       fxCalled = false
@@ -72,10 +72,10 @@ describe "Util", ->
       fx = -> fxCalled = true; "x"
       fy = -> fyCalled = true;"y"
 
-      qs([fx, (-> Q.reject("error")), fy])
-        .fail (err) ->
+      qs([fx, (-> W.reject("error")), fy])
+        .otherwise (err) ->
           expect(-> throw err).throw "error"
-        .finally ->
+        .ensure ->
           expect(fxCalled, "functions before error must be called").true
           expect(fyCalled, "functions after error must not be called").false
 

@@ -1,5 +1,3 @@
-Q = require("q")
-
 describe "async testing", ->
   it "supports async", ->
     done = @async()

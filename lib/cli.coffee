@@ -43,4 +43,7 @@ suite.withDSL -> require(file) for file in files
 runner = new Runner(suite)
 runner.reporter(program.reporter or "dot")
 
-runner.run().then -> process.exit(runner.stats.failures)
+runner.run().then(
+  -> process.exit(runner.stats.failures)
+  (err) -> throw err
+)

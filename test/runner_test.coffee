@@ -1,5 +1,5 @@
 _           = require("underscore")
-Q           = require("q")
+W           = require("when")
 {reporters} = require("mocha")
 Suite       = requireLib("suite")
 Runner      = requireLib("runner")
@@ -103,8 +103,8 @@ describe "Runner", ->
     testRunTest "runs with a passing test", "pass", ->
     testRunTest "runs with a failing test", "fail", (-> throw "This failed"), "This failed"
     testRunTest "runs with a timeout failing test", "fail", (-> @async()), {}
-    testRunTest "runs with a test that returns a promise", "pass", -> Q(null)
-    testRunTest "runs with a failing promise test", "fail", (-> Q.reject("error")), "error"
+    testRunTest "runs with a test that returns a promise", "pass", -> W(null)
+    testRunTest "runs with a failing promise test", "fail", (-> W.reject("error")), "error"
 
     testRunTestMultiple = (testDesc, result, testFn, args = []) ->
       it testDesc, (ctx) ->
@@ -131,8 +131,8 @@ describe "Runner", ->
     testRunTestMultiple "runs with a pending test", "pending"
     testRunTestMultiple "runs with a passing test", "pass", ->
     testRunTestMultiple "runs with a failing test", "fail", (-> throw "This failed"), "This failed"
-    testRunTestMultiple "runs with a test that returns a promise", "pass", -> Q(null)
-    testRunTestMultiple "runs with a failing promise test", "fail", (-> Q.reject("error")), "error"
+    testRunTestMultiple "runs with a test that returns a promise", "pass", -> W(null)
+    testRunTestMultiple "runs with a failing promise test", "fail", (-> W.reject("error")), "error"
 
     it "runs correctly with multiple contexts and tests", (ctx) ->
       suite = new Suite()
@@ -198,7 +198,7 @@ describe "Runner", ->
         runner = new Runner(suite)
         runner.reporter(SpyReporter)
 
-        runner.run().fail ->
+        runner.run().otherwise ->
           runner.reporter().check([
             [ "start" ]
             [ "suite", ctx.context ]
@@ -245,7 +245,7 @@ describe "Runner", ->
         runner = new Runner(suite)
         runner.reporter(SpyReporter)
 
-        runner.run().fail ->
+        runner.run().otherwise ->
           runner.reporter().check([
             [ "start" ]
             [ "suite", ctx.context ]

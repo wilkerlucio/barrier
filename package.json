@@ -16,14 +16,14 @@
     "url": "git://github.com/wilkerlucio/barrier.git"
   },
   "dependencies": {
-    "q": "~0.9.7",
     "coffee-script": "~1.6.3",
     "underscore": "~1.5.2",
     "colors": "~0.6.2",
     "commander": "~2.0.0",
     "chai": "~1.8.1",
     "mocha": "~1.13.0",
-    "sinon": "~1.7.3"
+    "sinon": "~1.7.3",
+    "when": "~2.6.0"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
