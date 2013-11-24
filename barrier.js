@@ -1,5 +1,7 @@
 ;(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var ConsoleReporter, Runner, Suite, dsl, suite;
+var ConsoleReporter, Q, Runner, Suite, dsl, suite;
+
+Q = require("q");
 
 Suite = require("./suite.coffee");
 
@@ -14,13 +16,13 @@ ConsoleReporter = function(runner) {
   });
   runner.on("test", function() {});
   runner.on("pass", function(test) {
-    return console.log("%c " + test.title, "color: #0c0");
+    return console.log("%c" + test.title, "color: #0c0");
   });
   runner.on("fail", function(test, err) {
     return console.error(test.title, err.stack);
   });
   runner.on("pending", function(test) {
-    return console.log("%c " + test.title, "color: #ccca1b");
+    return console.log("%c" + test.title, "color: #ccca1b");
   });
   runner.on("hook", function() {});
   runner.on("test end", function() {});
@@ -36,7 +38,7 @@ suite = new Suite();
 
 dsl = suite.withDSL();
 
-window.onload = function() {
+window.BarrierRun = function() {
   var runner;
   dsl();
   runner = new Runner(suite);
@@ -44,8 +46,14 @@ window.onload = function() {
   return runner.run();
 };
 
+window.BarrierQ = Q;
 
-},{"./runner.coffee":4,"./suite.coffee":6}],2:[function(require,module,exports){
+if (typeof BARRIER_NO_AUTORUN === "undefined" || BARRIER_NO_AUTORUN === null) {
+  window.onload = BarrierRun;
+}
+
+
+},{"./runner.coffee":4,"./suite.coffee":6,"q":43}],2:[function(require,module,exports){
 var Case, Q, fk, util, _;
 
 _ = require("underscore");

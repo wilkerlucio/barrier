@@ -1,3 +1,4 @@
+Q      = require("q")
 Suite  = require("./suite.coffee")
 Runner = require("./runner.coffee")
 
@@ -31,9 +32,12 @@ ConsoleReporter = (runner) ->
 suite = new Suite()
 dsl = suite.withDSL()
 
-window.onload = ->
+window.BarrierRun = ->
   dsl()
 
   runner = new Runner(suite)
   runner.reporter ConsoleReporter
   runner.run()
+
+window.BarrierQ = Q
+window.onload = BarrierRun unless BARRIER_NO_AUTORUN?
