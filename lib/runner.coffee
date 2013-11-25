@@ -1,6 +1,7 @@
 _              = require("lodash")
 wfn            = require("when/function")
 timeout        = require("when/timeout")
+sequence       = require("when/sequence")
 path           = require("path")
 {EventEmitter} = require("events")
 
@@ -64,4 +65,4 @@ module.exports = class Runner extends EventEmitter
     wfn.call(block)
       .then => @emit("hook end", block, name)
 
-  sequence: (list, prepare) -> util.qSequence(_.map(list, prepare))
+  sequence: (list, prepare) -> sequence(_.map(list, prepare))

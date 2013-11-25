@@ -25,13 +25,6 @@ module.exports = util =
     else
       restore
 
-  qSequence: (sequence, acc = null) ->
-    sequence ||= []
-    return W(acc) unless sequence.length
-
-    promise = wfn.call(sequence.shift(), acc)
-    promise.then (res) -> util.qSequence(sequence, res)
-
   flag: (obj, key, value) ->
     return null unless obj
     flags = obj[util.flag.key] || (obj[util.flag.key] = {})

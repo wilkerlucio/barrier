@@ -1,5 +1,8 @@
 _           = require("lodash")
 W           = require("when")
+unfold      = require("when/unfold")
+sequence    = require("when/sequence")
+wfn         = require("when/function")
 Exceptation = require("./expectation.coffee")
 util        = require("./util.coffee")
 
@@ -12,12 +15,12 @@ module.exports = class UnitRunner
     dslRevert = util.reversibleChange(global, expect: @expect, barrierContext: this)
     start = new Date
 
-    util.qSequence([].concat(
+    sequence([].concat(
       @beforeEachBlocks()
       @parallelWait(@test.block)
     )).ensure =>
       @test.duration = new Date - start
-      util.qSequence @afterEachBlocks().concat(dslRevert)
+      sequence @afterEachBlocks().concat(dslRevert)
 
   beforeEachBlocks: ->
     _.map(_.flatten(_.invoke util.ancestorChain(@test.parent).reverse(), "hook", "beforeEach"), @injectedBlock)
@@ -42,33 +45,16 @@ module.exports = class UnitRunner
 
   inject: (block) -> @injectedBlock(block)()
 
-  waitFor: (promise) ->
-    error = null
-    try
-      throw new Error()
-    catch e
-      error = e
+  waitFor: (promise) -> @tasks.push(promise)
 
-    promise.otherwise (err) ->
-      stack = error.stack
-      err.stack += "\n" + stack.substring(stack.indexOf("\n") + 1)
-      throw err
+  parallelWait: (block) -> =>
+    @tasks.push(@inject(block))
 
-    promise.ensure @taskDone
-    @tasks.push(promise)
-
-  parallelWait: (block) ->
-    =>
-      @inject(block).then =>
-        @defer = W.defer()
-        @taskDone()
-        @defer.promise
-
-  allTasksDone: -> _.every @tasks, (task) -> task.inspect().state != "pending"
-
-  taskDone: =>
-    if @defer.promise.inspect().state == "pending" and @allTasksDone()
-      @defer.resolve(W.all(@tasks))
+    unfold(
+      => [@tasks.shift(), null]
+      => @tasks.length == 0
+      ->
+    )
 
   async: ->
     defer = W.defer()
