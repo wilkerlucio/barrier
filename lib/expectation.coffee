@@ -63,7 +63,7 @@ module.exports = class Expectation extends Assertion
 
 Expectation.addMethod "reject", (args...) ->
   fn = @_obj
-  p = if _.isFunction(fn) then wfn.call(fn) else W(fn)
+  p = if _.isFunction(fn) then fn() else fn
 
   promise = p
     .then(-> ->)
