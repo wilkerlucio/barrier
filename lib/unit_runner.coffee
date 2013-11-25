@@ -1,4 +1,4 @@
-_           = require("underscore")
+_           = require("lodash")
 W           = require("when")
 Exceptation = require("./expectation.coffee")
 util        = require("./util.coffee")

@@ -1,4 +1,4 @@
-_                        = require("underscore")
+_                        = require("lodash")
 Scope                    = require("./scope.coffee")
 Case                     = require("./case.coffee")
 util                     = require("./util.coffee")

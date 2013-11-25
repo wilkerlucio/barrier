@@ -1,4 +1,4 @@
-_           = require("underscore")
+_           = require("lodash")
 W           = require("when")
 {reporters} = require("mocha")
 Suite       = requireLib("suite")

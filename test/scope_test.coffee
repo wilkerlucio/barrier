@@ -1,4 +1,4 @@
-_     = require("underscore")
+_     = require("lodash")
 sinon = require("sinon")
 Scope = requireLib("scope")
 util  = requireLib("util")

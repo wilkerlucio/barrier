@@ -1,4 +1,4 @@
-_              = require("underscore")
+_              = require("lodash")
 wfn            = require("when/function")
 timeout        = require("when/timeout")
 path           = require("path")

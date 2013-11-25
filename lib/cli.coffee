@@ -33,7 +33,7 @@ program.parse process.argv
 Suite  = require("../lib/suite.coffee")
 Runner = require("../lib/runner.coffee")
 Path   = require("path")
-_      = require("underscore")
+_      = require("lodash")
 
 files = _.map program.args, (path) -> Path.resolve(path)
 
