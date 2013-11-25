@@ -9,6 +9,9 @@ module.exports = (grunt) ->
     pkg: grunt.file.readJSON("package.json")
 
     barrier:
+      options:
+        reporter: "progress"
+
       all: ["test/helper.coffee", "test/**/*_test.coffee"]
       ci:
         options:
