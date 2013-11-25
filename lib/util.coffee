@@ -20,7 +20,8 @@ module.exports = util =
       null
 
     if block?
-      wfn.call(block).then -> restore()
+      block()
+      restore()
     else
       restore
 

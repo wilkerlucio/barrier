@@ -28,8 +28,8 @@ describe "Util", ->
     it "can revert by sending a block function", (obj) ->
       util.reversibleChange obj, b:2, ->
         expect(_.clone obj).eql(a:1,b:2)
-      .then ->
-        expect(obj).eql(a:1)
+
+      expect(obj).eql(a:1)
 
   describe "qSequence", ->
     qs = util.qSequence

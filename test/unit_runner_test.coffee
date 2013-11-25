@@ -27,6 +27,14 @@ describe "Test Runner", ->
 
     unit.run().then -> expect(test.duration).not.undefined
 
+  it "fails when the block raises an error", ->
+    block = -> throw "err"
+    scope = new Scope("")
+    test = new Case("", block, scope)
+    unit = new UnitRunner(test)
+
+    unit.run().otherwise (err) -> expect(err).eql "err"
+
   describe "beforeEach blocks", ->
     it "must run the before blocks on parent ancestors", ->
       seq = []
