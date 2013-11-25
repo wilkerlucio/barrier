@@ -25,6 +25,9 @@ module.exports = (grunt) ->
         command: "./node_modules/.bin/browserify -t coffeeify lib/browser.coffee > barrier.js"
 
     watch:
+      options:
+        spawn: false
+
       test:
         files: ["Gruntfile.coffee", "test/**/*", "lib/**/*"]
         tasks: ["barrier:all"]
