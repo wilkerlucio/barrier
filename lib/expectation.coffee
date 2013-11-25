@@ -1,6 +1,7 @@
 _    = require("lodash")
 W    = require("when")
 wfn  = require("when/function")
+keys = require("when/keys")
 Path = require("path")
 
 utils          = require("../node_modules/chai/lib/chai/utils")
@@ -40,14 +41,6 @@ module.exports = class Expectation extends Assertion
 
     this
 
-  flag: (name, value) ->
-    if arguments.length == 1
-      @__flags[name]
-    else
-      @__flags[name] = value
-
-      this
-
   hasPromises: (args) ->
     values = _.values(flag(this) || {}).concat(args)
     _.any values, (v) -> W.isPromiseLike(v)
@@ -74,9 +67,6 @@ Expectation.addMethod "reject", (args...) ->
 
   this
 
-Assertion.addProperty.call Expectation, "hold", ->
-  @__flags.hold = true
-
-  this
+Assertion.addProperty.call Expectation, "hold", -> flag(this, "hold", true); this
 
 assertions("Assertion": Expectation, utils)

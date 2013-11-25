@@ -23,11 +23,19 @@ module.exports = class UnitRunner
       sequence @afterEachBlocks().concat(dslRevert)
 
   beforeEachBlocks: ->
-    _.map(_.flatten(_.invoke util.ancestorChain(@test.parent).reverse(), "hook", "beforeEach"), @injectedBlock)
+    _(util.ancestorChain(@test.parent))
+      .reverse()
+      .invoke("hook", "beforeEach")
+      .flatten()
+      .map(@injectedBlock)
+      .value()
 
   afterEachBlocks: ->
-    _.map _.flatten(_.invoke util.ancestorChain(@test.parent), "hook", "afterEach"), (block) =>
-      => @injectedBlock(block)().otherwise -> null
+    _(util.ancestorChain(@test.parent))
+      .invoke("hook", "afterEach")
+      .flatten()
+      .map((block) => => @inject(block).then undefined, -> null)
+      .value()
 
   injectedBlock: (block) => =>
     lazys = util.functionArgNames(block)
