@@ -92,7 +92,7 @@ module.exports = Case = (function() {
 
 
 },{"./util.coffee":8,"lodash":43}],3:[function(require,module,exports){
-var Assertion, AssertionError, Expectation, Path, W, assertions, chai, flag, utils, wfn, _, _ref,
+var Assertion, AssertionError, Expectation, Path, W, assertions, chai, flag, keys, utils, wfn, _, _ref,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   __slice = [].slice;
@@ -102,6 +102,8 @@ _ = require("lodash");
 W = require("when");
 
 wfn = require("when/function");
+
+keys = require("when/keys");
 
 Path = require("path");
 
@@ -178,15 +180,6 @@ module.exports = Expectation = (function(_super) {
     };
   };
 
-  Expectation.prototype.flag = function(name, value) {
-    if (arguments.length === 1) {
-      return this.__flags[name];
-    } else {
-      this.__flags[name] = value;
-      return this;
-    }
-  };
-
   Expectation.prototype.hasPromises = function(args) {
     var values;
     values = _.values(flag(this) || {}).concat(args);
@@ -235,7 +228,7 @@ Expectation.addMethod("reject", function() {
 });
 
 Assertion.addProperty.call(Expectation, "hold", function() {
-  this.__flags.hold = true;
+  flag(this, "hold", true);
   return this;
 });
 
@@ -244,7 +237,7 @@ assertions({
 }, utils);
 
 
-},{"../node_modules/chai/lib/chai/assertion":18,"../node_modules/chai/lib/chai/core/assertions":19,"../node_modules/chai/lib/chai/utils":30,"../node_modules/chai/node_modules/assertion-error":38,"./util.coffee":8,"lodash":43,"path":12,"when":48,"when/function":44}],4:[function(require,module,exports){
+},{"../node_modules/chai/lib/chai/assertion":18,"../node_modules/chai/lib/chai/core/assertions":19,"../node_modules/chai/lib/chai/utils":30,"../node_modules/chai/node_modules/assertion-error":38,"./util.coffee":8,"lodash":43,"path":12,"when":49,"when/function":44,"when/keys":45}],4:[function(require,module,exports){
 var EventEmitter, Runner, Suite, UnitRunner, path, sequence, timeout, util, wfn, _,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -381,7 +374,7 @@ module.exports = Runner = (function(_super) {
 })(EventEmitter);
 
 
-},{"./suite.coffee":6,"./unit_runner.coffee":7,"./util.coffee":8,"events":11,"lodash":43,"path":12,"when/function":44,"when/sequence":45,"when/timeout":46}],5:[function(require,module,exports){
+},{"./suite.coffee":6,"./unit_runner.coffee":7,"./util.coffee":8,"events":11,"lodash":43,"path":12,"when/function":44,"when/sequence":46,"when/timeout":47}],5:[function(require,module,exports){
 var LazyBlock, Scope, fk, util, _;
 
 _ = require("lodash");
@@ -640,18 +633,18 @@ module.exports = UnitRunner = (function() {
   };
 
   UnitRunner.prototype.beforeEachBlocks = function() {
-    return _.map(_.flatten(_.invoke(util.ancestorChain(this.test.parent).reverse(), "hook", "beforeEach")), this.injectedBlock);
+    return _(util.ancestorChain(this.test.parent)).reverse().invoke("hook", "beforeEach").flatten().map(this.injectedBlock).value();
   };
 
   UnitRunner.prototype.afterEachBlocks = function() {
     var _this = this;
-    return _.map(_.flatten(_.invoke(util.ancestorChain(this.test.parent), "hook", "afterEach")), function(block) {
+    return _(util.ancestorChain(this.test.parent)).invoke("hook", "afterEach").flatten().map(function(block) {
       return function() {
-        return _this.injectedBlock(block)().otherwise(function() {
+        return _this.inject(block).then(void 0, function() {
           return null;
         });
       };
-    });
+    }).value();
   };
 
   UnitRunner.prototype.injectedBlock = function(block) {
@@ -725,7 +718,7 @@ module.exports = UnitRunner = (function() {
 })();
 
 
-},{"./expectation.coffee":3,"./util.coffee":8,"lodash":43,"when":48,"when/function":44,"when/sequence":45,"when/unfold":47}],8:[function(require,module,exports){
+},{"./expectation.coffee":3,"./util.coffee":8,"lodash":43,"when":49,"when/function":44,"when/sequence":46,"when/unfold":48}],8:[function(require,module,exports){
 var W, util, wfn, _;
 
 _ = require("lodash");
@@ -815,7 +808,7 @@ module.exports = util = {
 util.flag.key = "__flags";
 
 
-},{"lodash":43,"when":48,"when/function":44}],9:[function(require,module,exports){
+},{"lodash":43,"when":49,"when/function":44}],9:[function(require,module,exports){
 
 
 //
@@ -13656,7 +13649,108 @@ define(function(require) {
 
 
 
-},{"./when":48}],45:[function(require,module,exports){
+},{"./when":49}],45:[function(require,module,exports){
+/** @license MIT License (c) copyright 2011-2013 original author or authors */
+
+/**
+ * Licensed under the MIT License at:
+ * http://www.opensource.org/licenses/mit-license.php
+ *
+ * @author Brian Cavalier
+ * @author John Hann
+ */
+(function(define) { 'use strict';
+define(function(require) {
+	var when, promise, keys, eachKey, owns;
+
+	when = require('./when');
+	promise = when.promise;
+
+	// Public API
+
+	keys = {
+		all: all,
+		map: map
+	};
+
+	// Safe ownProp
+	owns = {}.hasOwnProperty;
+
+	// Use Object.keys if available, otherwise for..in
+	eachKey = Object.keys
+		? function(object, lambda) {
+			Object.keys(object).forEach(function(key) {
+				lambda(object[key], key);
+			});
+		}
+		: function(object, lambda) {
+			for(var key in object) {
+				if(owns.call(object, key)) {
+					lambda(object[key], key);
+				}
+			}
+		};
+
+	return keys;
+
+	/**
+	 * Resolve all the key-value pairs in the supplied object or promise
+	 * for an object.
+	 * @param {Promise|object} object or promise for object whose key-value pairs
+	 *  will be resolved
+	 * @returns {Promise} promise for an object with the fully resolved key-value pairs
+	 */
+	function all(object) {
+		return map(object, identity);
+	}
+
+	/**
+	 * Map values in the supplied object's keys
+	 * @param {Promise|object} object or promise for object whose key-value pairs
+	 *  will be reduced
+	 * @param {function} mapFunc mapping function mapFunc(value) which may
+	 *  return either a promise or a value
+	 * @returns {Promise} promise for an object with the mapped and fully
+	 *  resolved key-value pairs
+	 */
+	function map(object, mapFunc) {
+		return when(object, function(object) {
+			return promise(resolveMap);
+
+			function resolveMap(resolve, reject, notify) {
+				var results, toResolve;
+
+				results = {};
+				toResolve = 0;
+
+				eachKey(object, function(value, key) {
+					++toResolve;
+					when(value, mapFunc).then(function(mapped) {
+						results[key] = mapped;
+
+						if(!--toResolve) {
+							resolve(results);
+						}
+					}, reject, notify);
+				});
+
+				// If there are no keys, resolve immediately
+				if(!toResolve) {
+					resolve(results);
+				}
+			}
+		});
+	}
+
+	function identity(x) { return x; }
+
+});
+})(
+	typeof define === 'function' && define.amd ? define : function (factory) { module.exports = factory(require); }
+	// Boilerplate for AMD and Node
+);
+
+},{"./when":49}],46:[function(require,module,exports){
 /** @license MIT License (c) copyright 2011-2013 original author or authors */
 
 /**
@@ -13708,7 +13802,7 @@ define(function(require) {
 
 
 
-},{"./when":48}],46:[function(require,module,exports){
+},{"./when":49}],47:[function(require,module,exports){
 /** @license MIT License (c) copyright 2011-2013 original author or authors */
 
 /**
@@ -13781,7 +13875,7 @@ define(function(require) {
 
 
 
-},{"./when":48}],47:[function(require,module,exports){
+},{"./when":49}],48:[function(require,module,exports){
 /** @license MIT License (c) copyright B Cavalier & J Hann */
 
 /**
@@ -13829,7 +13923,7 @@ define(function(require) {
 );
 
 
-},{"./when":48}],48:[function(require,module,exports){
+},{"./when":49}],49:[function(require,module,exports){
 var process=require("__browserify_process");/** @license MIT License (c) copyright 2011-2013 original author or authors */
 
 /**
