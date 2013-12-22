@@ -159,6 +159,30 @@ describe "Runner", ->
         [ "end" ]
       ])
 
+    describe "bail run", ->
+      it "stop the runner after first fail", (ctx) ->
+        suite = new Suite()
+        suite.after ->
+        ctx.context = suite.context "", ->
+          ctx.test = suite.test "", -> throw "error"
+          ctx.test2 = suite.test "", ->
+        suite.context "", ->
+          suite.before ->
+          suite.test "", ->
+          suite.after ->
+        runner = new Runner(suite, bail: true)
+        runner.reporter(SpyReporter)
+
+        runner.run().then -> runner.reporter().check([
+          [ "start" ]
+          [ "suite",     ctx.context ]
+          [ "test",      ctx.test ]
+          [ "fail",      ctx.test, "error" ]
+          [ "test end",  ctx.test ]
+          [ "suite end", ctx.context ]
+          [ "end" ]
+        ])
+
     describe "before blocks", ->
       it "runs before blocks once before test", (ctx) ->
         suite = new Suite()

@@ -13,8 +13,11 @@ module.exports = class Runner extends EventEmitter
   constructor: (@suite, options = {}) ->
     throw "invalid suite" unless @suite? and @suite instanceof Suite
 
+    @bailed = false
+
     @options = _.extend
       timeout: 2000
+      bail: false
     , options
 
   reporter: (reporter) ->
@@ -39,6 +42,8 @@ module.exports = class Runner extends EventEmitter
     @runScope(@suite.rootScope).ensure => @emit("end")
 
   runScope: (scope) ->
+    return if @bailed
+
     @emit("suite", scope) if scope.parent
 
     @sequence(scope.hook("before"), ((h) => => @runHook("before", h)))
@@ -48,6 +53,8 @@ module.exports = class Runner extends EventEmitter
       .then(=> @emit("suite end", scope) if scope.parent)
 
   runTest: (test) ->
+    return if @bailed
+
     @emit("test", test)
 
     if test.isPending()
@@ -56,10 +63,14 @@ module.exports = class Runner extends EventEmitter
     else
       timeout(@options.timeout, new UnitRunner(test).run())
         .then(=> @emit("pass", test))
-        .otherwise((err) => @emit("fail", test, err))
+        .otherwise (err) =>
+          @bailed = true if @options.bail
+          @emit("fail", test, err)
         .ensure(=> @emit("test end", test))
 
   runHook: (name, block) ->
+    return if @bailed
+
     @emit("hook", block, name)
 
     wfn.call(block)
