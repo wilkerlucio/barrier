@@ -5,10 +5,10 @@ describe "Suite", ->
 
   describe "init suite", ->
     it "has a global root scope", (suite) ->
-      expect(suite.scopes).length(1)
-      expect(suite.scopes[0]).a.instanceOf(Scope)
+      expect(suite.children).length(1)
+      expect(suite.children[0]).a.instanceOf(Scope)
 
-  describe "scopes", ->
+  describe "children", ->
     it "creates with null title", (suite) ->
       expect(suite.describe()).property("title", null)
       expect(suite.describe(null)).property("title", null)
@@ -17,7 +17,7 @@ describe "Suite", ->
       scope = suite.describe "pending"
       expect(scope).ok
 
-    it "creates scopes and runs the block", (suite) ->
+    it "creates children and runs the block", (suite) ->
       ran = false
       suite.describe "something", -> ran = true
 
@@ -52,7 +52,7 @@ describe "Suite", ->
       test = suite.test "flagger", x:1, ->
       expect(flag(test, "x")).eq(1)
 
-    it "inherit parent scopes flags", (suite) ->
+    it "inherit parent children flags", (suite) ->
       test = null
 
       suite.describe "nesting flags", x:1, ->

@@ -6,10 +6,10 @@ util                     = require("./util.coffee")
 
 module.exports = class Suite
   constructor: ->
-    @rootScope  = new Scope(null, null)
-    @scopes     = [@rootScope]
+    @rootScope = new Scope(null, null)
+    @children  = [@rootScope]
 
-  currentScope: -> _.last @scopes
+  currentScope: -> _.last @children
 
   withDSL: (callback) ->
     reversibleChange global,
@@ -34,9 +34,9 @@ module.exports = class Suite
       flag(scope, key, value) for key, value of flags
 
       if block
-        @scopes.push(scope)
+        @children.push(scope)
         block()
-        @scopes.pop()
+        @children.pop()
 
   it: (title, flags, block) =>
     if _.isFunction(flags)
