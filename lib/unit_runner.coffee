@@ -27,7 +27,7 @@ module.exports = class UnitRunner
       .reverse()
       .invoke("hook", "beforeEach")
       .flatten()
-      .map(@injectedBlock)
+      .map((fn) => @injectedBlock(fn))
       .value()
 
   afterEachBlocks: ->
@@ -37,21 +37,26 @@ module.exports = class UnitRunner
       .map((block) => => @inject(block).then undefined, -> null)
       .value()
 
-  injectedBlock: (block) => =>
+  injectedBlock: (block, callStack = []) => =>
     lazys = util.functionArgNames(block)
     W.all(_.map(lazys, (lazyName) =>
-      lazy = util.parentLookup(@test.parent, "lazyBlocks", lazyName)
+      if lazy = util.parentLookup(@test.parent, "lazyBlocks", lazyName)
+        while _.include(callStack, lazy)
+          lazy = util.parentLookup(lazy.scope.parent, "lazyBlocks", lazyName)
 
-      if lazy
+        throw new Error("No more parent '#{lazyName}' after #{callStack.length} depth") unless lazy
+
+        newStack = callStack.concat(lazy)
+
         if lazy.persist
-          lazy._cache ?= @inject(lazy.block)
+          lazy._cache ?= @inject(lazy.block, newStack)
         else
-          @lazyCache[lazyName] ?= @inject(lazy.block)
+          @lazyCache[lazyName] ?= @inject(lazy.block, newStack)
       else
-        W.reject "Lazy block '#{lazyName}' wasn't defined"
+        W.reject new Error("Lazy block '#{lazyName}' wasn't defined")
     )).then (args) => block.apply(this, args)
 
-  inject: (block) -> @injectedBlock(block)()
+  inject: -> @injectedBlock(arguments...)()
 
   waitFor: (promise) -> @tasks.push(promise)
 

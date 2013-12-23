@@ -149,8 +149,7 @@ describe "Test Runner", ->
       test = new Case("", ((x) -> null), scope)
       unit = new UnitRunner(test)
 
-      unit.run().otherwise (e) ->
-        expect(e).eq "Lazy block 'x' wasn't defined"
+      expect(unit.run()).hold.reject("Lazy block 'x' wasn't defined")
 
     it "can use lazys on lazys", ->
       seq = []
@@ -194,6 +193,30 @@ describe "Test Runner", ->
       unit.run().then ->
         unit2.run().then ->
           expect(callCount, "lazy must had cached").eql(1)
+
+    describe "lazy override parent lookup", ->
+      it "can extend parent lazy definitions", ->
+        scope = new Scope("Lazy parent scope lookup")
+        scope.addLazy "x", -> 1
+
+        innerScope = new Scope("inner scope", scope)
+        innerScope.addLazy "x", (x) -> x + 2
+
+        testBlock = (x) -> expect(x).eq(3)
+        test = new Case("", testBlock, innerScope)
+
+        new UnitRunner(test).run()
+
+      it "raises error if there is no parent definition", ->
+        scope = new Scope("Lazy parent scope lookup")
+
+        innerScope = new Scope("inner scope", scope)
+        innerScope.addLazy "x", (x) -> x + 2
+
+        testBlock = (x) -> expect(x).eq(3)
+        test = new Case("", testBlock, innerScope)
+
+        expect(new UnitRunner(test).run()).hold.reject(Error, "No more parent 'x' after 1 depth")
 
     it "works on beforeEach blocks", ->
       seq = []
