@@ -269,17 +269,14 @@ describe "Runner", ->
         runner = new Runner(suite)
         runner.reporter(SpyReporter)
 
-        runner.run().otherwise ->
+        runner.run().then undefined, ->
           runner.reporter().check([
             [ "start" ]
-            [ "suite", ctx.context ]
-              [ "test",     ctx.test2 ]
-              [ "pass",     ctx.test2 ]
-              [ "test end", ctx.test2 ]
-              [ "suite",    ctx.context2 ]
-                [ "test",     ctx.test1 ]
-                [ "pass",     ctx.test1 ]
-                [ "test end", ctx.test1 ]
-                [ "hook",     ctx.after, "after" ]
+              [ "suite", ctx.context ]
+                [ "suite",    ctx.context2 ]
+                  [ "test",     ctx.test1 ]
+                  [ "pass",     ctx.test1 ]
+                  [ "test end", ctx.test1 ]
+                  [ "hook",     ctx.after, "after" ]
             [ "end" ]
           ])

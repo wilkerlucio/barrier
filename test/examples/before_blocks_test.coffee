@@ -1,6 +1,6 @@
 {dv} = require("../support/dv.coffee")
 
-describe "Before Blocks", ->
+describe "Example Before Blocks", ->
   out = null
   out2 = null
   n = 0
@@ -19,8 +19,6 @@ describe "Before Blocks", ->
   describe "inner most scopes with before", ->
     beforeEach -> n += 2
 
-    it "runs external and internal", ->
-      expect(n).eq(6)
+    it "runs external and internal", -> expect(n).eq(5)
 
-  it "runs before each on each test", ->
-    expect(n).eq(3)
+  it "runs before each on each test", -> expect(n).eq(6)

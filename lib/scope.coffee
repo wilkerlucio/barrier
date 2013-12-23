@@ -11,7 +11,6 @@ module.exports = class Scope
 
     @lazyBlocks      = {}
     @children        = []
-    @tests           = []
 
     @parent.children.push(this) if @parent
 

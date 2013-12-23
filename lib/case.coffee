@@ -7,7 +7,7 @@ module.exports = class Case
     throw "Test Case requires a parent" unless @parent
 
     @[fk] = _.clone(@parent[fk])
-    @parent.tests.push(this)
+    @parent.children.push(this)
 
     @_slow = 75
 

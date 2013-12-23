@@ -2,12 +2,16 @@ Case = requireLib("case")
 {flag} = requireLib("util")
 
 describe "Case", ->
-  lazy "scope", ->
-    tests: []
+  lazy "scope", -> children: []
 
   describe "initialize", ->
     it "fail to initialize without a parent", ->
       expect(-> new Case("", null, null)).throw /Test Case requires a parent/
+
+    it "adds itself on the children list of the parent", (scope) ->
+      tcase = new Case("", (->), scope)
+
+      expect(scope.children).eql [tcase]
 
   describe "#isPending", ->
     it "is pending when there is no block", (scope) ->

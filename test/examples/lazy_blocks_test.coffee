@@ -1,6 +1,6 @@
 {dv} = require("../support/dv.coffee")
 
-describe "Lazy Blocks", ->
+describe "Example Lazy Blocks", ->
   describe "Simple Lazy", ->
     lazy "user", -> "value"
     it "injects the value", (user) -> expect(user).eq("value")

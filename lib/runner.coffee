@@ -47,10 +47,11 @@ module.exports = class Runner extends EventEmitter
     @emit("suite", scope) if scope.parent
 
     @sequence(scope.hook("before"), ((h) => => @runHook("before", h)))
-      .then(=> @sequence(scope.tests, ((test) => => @runTest(test))))
-      .then(=> @sequence(scope.children, ((s) => => @runScope(s))))
+      .then(=> @sequence(scope.children, ((child) => => @runChildren(child))))
       .then(=> @sequence(scope.hook("after"), ((h) => => @runHook("after", h))))
       .then(=> @emit("suite end", scope) if scope.parent)
+
+  runChildren: (child) -> if child.each then @runScope(child) else @runTest(child)
 
   runTest: (test) ->
     return if @bailed
@@ -73,7 +74,6 @@ module.exports = class Runner extends EventEmitter
 
     @emit("hook", block, name)
 
-    wfn.call(block)
-      .then => @emit("hook end", block, name)
+    wfn.call(block).then => @emit("hook end", block, name)
 
   sequence: (list, prepare) -> sequence(_.map(list, prepare))
