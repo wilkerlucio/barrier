@@ -43,6 +43,8 @@ runner.reporter(program.reporter or "dot")
 
 suite.withDSL -> require(file) for file in files
 
+require("./suite_processors/only.coffee")(suite.children)
+
 runner.run().then(
   -> process.exit(runner.stats.failures)
   (err) -> throw err
