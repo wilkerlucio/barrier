@@ -37,11 +37,11 @@ _      = require("lodash")
 
 files = _.map program.args, (path) -> Path.resolve(path)
 
-suite = new Suite()
-suite.withDSL -> require(file) for file in files
-
-runner = new Runner(suite)
+suite = global.BarrierSuite = new Suite()
+runner = global.BarrierRunner = new Runner(suite)
 runner.reporter(program.reporter or "dot")
+
+suite.withDSL -> require(file) for file in files
 
 runner.run().then(
   -> process.exit(runner.stats.failures)
