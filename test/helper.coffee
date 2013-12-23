@@ -1,5 +1,11 @@
 require("better-stack-traces").install()
-path = require("path")
+path  = require("path")
+sinon = require("sinon")
+
+BarrierRunner.options.bail = true
+
+lazy "sinon", -> sinon.sandbox.create()
+afterEach (sinon) -> sinon.restore()
 
 global.requireLib = (modules...) ->
   buildPath = (m) -> path.join(__dirname, "..", "lib", m)

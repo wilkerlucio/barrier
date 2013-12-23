@@ -51,7 +51,7 @@ module.exports = class Runner extends EventEmitter
       .then(=> @sequence(scope.hook("after"), ((h) => => @runHook("after", h))))
       .then(=> @emit("suite end", scope) if scope.parent)
 
-  runChildren: (child) -> if child.each then @runScope(child) else @runTest(child)
+  runChildren: (child) -> if child.hook then @runScope(child) else @runTest(child)
 
   runTest: (test) ->
     return if @bailed

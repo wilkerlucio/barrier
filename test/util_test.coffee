@@ -112,3 +112,18 @@ describe "Util", ->
 
     it "returns the argument names", ->
       expect(functionArgNames((x, y)->)).eql ["x", "y"]
+
+  describe "childrenIterator", ->
+    {childrenIterator} = util
+
+    it "throw a TypeError if the argument is not an array", ->
+      expect(-> childrenIterator(null)).throw(TypeError, "subject must be an Array")
+
+    it "iterates on a flat list", (sinon) ->
+      childrenIterator([1, 2], spy = sinon.spy())
+      expect(spy.args).eql [[1], [2]]
+
+    it "goes down into children", (sinon) ->
+      composed = children: [2, 3]
+      childrenIterator([1, composed, 4], spy = sinon.spy())
+      expect(spy.args).eql [[1],[composed],[2],[3],[4]]

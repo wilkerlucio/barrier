@@ -54,4 +54,13 @@ module.exports = util =
     else
       []
 
+  childrenIterator: (list, iterator) ->
+    throw new TypeError("subject must be an Array") unless _.isArray(list)
+
+    for item in list
+      iterator(item)
+      util.childrenIterator(item.children, iterator) if _.isArray(item.children)
+
+    null
+
 util.flag.key = "__flags"
