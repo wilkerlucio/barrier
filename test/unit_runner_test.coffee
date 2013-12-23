@@ -1,6 +1,6 @@
 _          = require("lodash")
-W = require("when")
-wfn = require("when/function")
+W          = require("when")
+wfn        = require("when/function")
 Scope      = requireLib("scope")
 Case       = requireLib("case")
 UnitRunner = requireLib("unit_runner")
