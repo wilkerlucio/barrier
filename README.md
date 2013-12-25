@@ -328,8 +328,6 @@ TODO (PR's would be welcome):
 ----------------------------
 
 * Separate Interface code from Suite
-* Make suite pre-processors
-* Feature to run a single test/suite (using pre-processors)
 * Verbose mode logging each step block
 * Isolated tests flag (for parallel testing)
 * TDD Interface
