@@ -16,7 +16,7 @@ module.exports = (grunt) ->
       ci:
         options:
           cmd: "./bin/barrier"
-          reporter: "spec"
+          reporter: "list"
 
         src: ["test/helper.coffee", "test/**/*_test.coffee"]
 
