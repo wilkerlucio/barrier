@@ -16,7 +16,6 @@ module.exports = class Runner extends EventEmitter
     @bailed = false
 
     @options = _.extend
-      timeout: 2000
       bail: false
     , options
 
@@ -62,7 +61,7 @@ module.exports = class Runner extends EventEmitter
       @emit("pending", test)
       @emit("test end", test)
     else
-      timeout(@options.timeout, new UnitRunner(test).run())
+      timeout(test.timeout(), new UnitRunner(test).run())
         .then(=> @emit("pass", test))
         .otherwise (err) =>
           @bailed = true if @options.bail

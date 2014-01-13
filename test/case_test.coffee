@@ -26,6 +26,16 @@ describe "Case", ->
 
       expect(test.isPending()).true
 
+  describe "#timeout", ->
+    lazy "tcase", (scope) -> new Case("", null, scope)
+
+    it "returns 2000 as default", (tcase) ->
+      expect(tcase.timeout()).eq 2000
+
+    it "uses the flag value if it's present", (tcase) ->
+      flag(tcase, "timeout", 10)
+      expect(tcase.timeout()).eq 10
+
   describe "#slow", ->
     lazy "tcase", (scope) -> new Case("", null, scope)
 

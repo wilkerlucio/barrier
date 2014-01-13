@@ -16,6 +16,8 @@ module.exports = class Case
 
   isPending: -> !@block || !!util.flag(this, "skip")
 
+  timeout: -> util.flag(this, "timeout") || 2000
+
   # this method is here to make Barrier Case compatible with Mocha reporters
   slow: (value) ->
     return @_slow if arguments.length == 0

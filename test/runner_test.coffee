@@ -85,8 +85,8 @@ describe "Runner", ->
       it testDesc, (ctx) ->
         suite = new Suite()
         ctx.context = suite.context "", ->
-          ctx.test = suite.test "", testFn
-        runner = new Runner(suite, timeout: 20)
+          ctx.test = suite.test "", timeout: 20, testFn
+        runner = new Runner(suite)
         runner.reporter(SpyReporter)
 
         runner.run().then -> runner.reporter().check([
