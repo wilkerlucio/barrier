@@ -17,7 +17,8 @@ Basic Testing
 
 This part describes the regular sync tests.
 
-Barrier uses RSpec-like syntax to describe tests, as so:
+Barrier uses RSpec-like syntax to describe tests, and it bundles Chai as the
+assertion framework, as so:
 
 ```javascript
 // Javascript
@@ -250,7 +251,7 @@ describe("Before promise me...", function() {
   before(function() { userDecorated = decorateUser(user); });
 
   it("is awesome", function() {
-    expect(userDecorated).to.not.be["null"]();
+    expect(userDecorated).to.not.be["null"];
   });
 });
 ```
@@ -267,7 +268,7 @@ describe "Before promise me...", ->
   # before blocks are done
   before -> userDecorated = decorateUser(user)
 
-  it "is awesome", -> expect(userDecorated).to.not.be.null()
+  it "is awesome", -> expect(userDecorated).to.not.be.null
 ```
 
 But remember about Lazy Attributes? They can be promises too!
@@ -306,7 +307,7 @@ describe("Lazy Promises Dependencies!", function() {
   });
 
   it("will load gracefully", function(user) {
-    expect(user.store).not.null();
+    expect(user.store).not.null;
   });
 });
 ```
@@ -319,7 +320,7 @@ describe "Lazy Promises Dependencies!", ->
   lazy "user", (store) -> createUser(store: store.id)
 
   it "will load gracefully", (user) ->
-    expect(user.store).not.null()
+    expect(user.store).not.null
 ```
 
 Get much more examples [here](https://github.com/wilkerlucio/barrier/blob/master/test/examples)
