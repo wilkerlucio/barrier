@@ -1,3 +1,5 @@
+require('../helper.coffee')
+
 W = require("when")
 {dv} = require("../support/dv.coffee")
 

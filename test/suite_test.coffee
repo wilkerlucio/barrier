@@ -1,3 +1,5 @@
+require('./helper.coffee')
+
 [Suite, Scope, {flag}] = requireLib("suite", "scope", "util")
 
 describe "Suite", ->

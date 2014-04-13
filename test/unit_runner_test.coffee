@@ -1,3 +1,5 @@
+require('./helper.coffee')
+
 _          = require("lodash")
 W          = require("when")
 wfn        = require("when/function")

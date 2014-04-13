@@ -1,3 +1,5 @@
+require('./helper.coffee')
+
 _                  = require("lodash")
 reporters          = require("mocha").reporters
 Suite              = require("../lib/suite.coffee")

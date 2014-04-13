@@ -10,9 +10,10 @@ module.exports = (grunt) ->
 
     barrier:
       options:
-        reporter: "progress"
+        reporter: "dot"
 
-      all: ["test/helper.coffee", "test/**/*_test.coffee"]
+      dev:
+        src: ["test/**/*_test.coffee"]
       ci:
         options:
           cmd: "./bin/barrier"
@@ -30,6 +31,6 @@ module.exports = (grunt) ->
 
       test:
         files: ["Gruntfile.coffee", "test/**/*", "lib/**/*"]
-        tasks: ["barrier:all"]
+        tasks: ["barrier:dev"]
 
   grunt.registerTask "default", ["barrier:all", "watch"]

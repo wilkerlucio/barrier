@@ -1,3 +1,5 @@
+require('./helper.coffee')
+
 Case = requireLib("case")
 {flag} = requireLib("util")
 

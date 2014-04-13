@@ -1,3 +1,5 @@
+require('./helper.coffee')
+
 _     = require("lodash")
 sinon = require("sinon")
 Scope = requireLib("scope")

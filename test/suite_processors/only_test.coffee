@@ -1,3 +1,5 @@
+require('../helper.coffee')
+
 processOnly = require("../../lib/suite_processors/only.coffee")
 
 describe "Suite Processor - Only", ->

@@ -1,3 +1,5 @@
+require('../helper.coffee')
+
 {dv} = require("../support/dv.coffee")
 
 describe "Simple Test", ->
