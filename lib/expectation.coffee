@@ -58,7 +58,7 @@ Expectation.addMethod "reject", (args...) ->
   fn = @_obj
   p = if _.isFunction(fn) then fn() else fn
 
-  promise = p
+  promise = W(p)
     .then(-> ->)
     .otherwise((err) -> -> throw err)
     .then (resolvedFn) => flag(this, "object", resolvedFn).throw(args...)

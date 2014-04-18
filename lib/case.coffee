@@ -4,7 +4,7 @@ fk   = util.flag.key
 
 module.exports = class Case
   constructor: (@title, @block, @parent) ->
-    throw "Test Case requires a parent" unless @parent
+    throw new Error("Test Case requires a parent") unless @parent
 
     @[fk] = _.clone(@parent[fk])
     @parent.children.push(this)

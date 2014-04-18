@@ -11,7 +11,7 @@ util           = require("./util.coffee")
 
 module.exports = class Runner extends EventEmitter
   constructor: (@suite, options = {}) ->
-    throw "invalid suite" unless @suite? and @suite instanceof Suite
+    throw new Error("invalid suite") unless @suite? and @suite instanceof Suite
 
     @bailed = false
 
@@ -32,7 +32,7 @@ module.exports = class Runner extends EventEmitter
           reporterClass = require(reporterPath)
           @_reporter = new reporterClass(this)
         catch e
-          throw "Cannot find reporter '#{reporter}'"
+          throw new Error("Cannot find reporter '#{reporter}'")
     else
       @_reporter
 
